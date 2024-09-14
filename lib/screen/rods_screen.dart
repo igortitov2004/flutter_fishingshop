@@ -45,7 +45,7 @@ class _RodsScreenState extends State<RodsScreen> {
               color: Color(0x1200CCFF),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
               child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, // Количество элементов в строке
                   childAspectRatio: 0.5, // Соотношение ширины и высоты
                   crossAxisSpacing:

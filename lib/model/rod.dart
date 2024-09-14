@@ -1,4 +1,5 @@
 import 'package:fishingshop/model/manufacturer.dart';
+import 'package:fishingshop/model/typeOfRod.dart';
 
 class Rod{
   int id;
@@ -7,7 +8,7 @@ class Rod{
   int weight;
   int testLoad;
   double price;
-  //TypeOfRodDTO type;
+  TypeOfRod type;
   Manufacturer manufacturer;
   String link;
 
@@ -18,6 +19,7 @@ class Rod{
     required this.weight,
     required this.testLoad,
     required this.price,
+    required this.type,
     required this.manufacturer,
     required this.link,
   });
@@ -30,9 +32,22 @@ class Rod{
       weight: rodMap['weight'],
       testLoad: rodMap['testLoad'],
       price: rodMap['price'],
+      type: TypeOfRod.fromMap(rodMap['type']),
       manufacturer: Manufacturer.fromMap(rodMap['manufacturer']),
       link: rodMap['link']
       );
+  }
+    Map<String, dynamic> toMap(Rod rod) {
+    return {
+      "name": rod.name,
+      "length": rod.length,
+      "weight": rod.weight,
+      "testLoad": rod.testLoad,
+      "price": rod.price,
+      "typeId": rod.type.id, // Предполагается, что у TypeOfRod есть метод toMap
+      "manufacturerId": rod.manufacturer.id, // Предполагается, что у Manufacturer есть метод toMap
+      "link": link,
+    };
   }
 
 

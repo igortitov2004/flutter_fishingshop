@@ -47,9 +47,9 @@ class _RodDetailsState extends State<RodDetails> {
 
                 Text(
                   "Удилище " +
-                      rod!.manufacturer.name +
-                      " " +
-                      rod!.name +
+                      rod!.type.type + 
+                      " " + rod!.manufacturer.name +
+                      " " + rod!.name +
                       " \n" +
                       rod!.length.toString() +
                       " м, " +

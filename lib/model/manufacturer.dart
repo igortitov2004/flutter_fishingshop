@@ -15,5 +15,11 @@ class Manufacturer {
       name: manufacturerMap['name'],
       );
   }
+  Map<String, dynamic> toMap(Manufacturer manufacturer) {
+    return {
+      'id': manufacturer.id,
+      'name': manufacturer.name,
+    };
+  }
 
 }

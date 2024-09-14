@@ -25,6 +25,15 @@ class MainScreen extends StatelessWidget {
               },
               child: const Text('Rods'),
             ),
+             ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  '/addRod',
+                );
+              },
+              child: const Text('addRod'),
+            ),
           ],
         ),
       ),

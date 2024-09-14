@@ -1,4 +1,5 @@
 import 'package:fishingshop/screen/main_screen.dart';
+import 'package:fishingshop/screen/rod_create_screen.dart';
 import 'package:fishingshop/screen/rod_details.dart';
 import 'package:fishingshop/screen/rods_screen.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const MainScreen(),
         '/home': (context) => const RodsScreen(),
         '/details': (context) => const RodDetails(),
+         '/addRod': (context) => const RodCreateScreen(),
       },
     );
   }
