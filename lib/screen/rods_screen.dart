@@ -35,6 +35,7 @@ class _RodsScreenState extends State<RodsScreen> {
           )
         : Scaffold(
             appBar: AppBar(
+              surfaceTintColor: Colors.transparent,
               title: const Text(
                 'solo',
               ),
@@ -42,27 +43,69 @@ class _RodsScreenState extends State<RodsScreen> {
               backgroundColor: const Color(0xffffffff),
             ),
             body: Container(
-              color: Color(0x1200CCFF),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Количество элементов в строке
-                  childAspectRatio: 0.5, // Соотношение ширины и высоты
-                  crossAxisSpacing:
-                      1, // Расстояние между элементами по горизонтали
-                  mainAxisSpacing:
-                      1, // Расстояние между элементами по вертикали
-                ),
-                itemCount: rods!.length, // Используем rods напрямую
-                itemBuilder: (context, index) {
-                  Rod rod = rods![index]; // Получаем объект Rod
-                  return RodTile(
-                    rod: rod,
-                    // Удаляем rodData, если он не нужен
-                  );
-                },
-              ),
-            ),
-          );
+                color: Color(0x1200CCFF),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                child: Column(children: [
+                  Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment
+                              .start, // Выравнивание по горизонтали
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  '/addRod',
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.add, color: Colors.blue),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Добавить удилище',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ])),
+                  Expanded(
+                    child: Container(
+                      child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2, // Количество элементов в строке
+                          childAspectRatio: 0.5, // Соотношение ширины и высоты
+                          crossAxisSpacing:
+                              1, // Расстояние между элементами по горизонтали
+                          mainAxisSpacing:
+                              1, // Расстояние между элементами по вертикали
+                        ),
+                        itemCount: rods!.length, // Используем rods напрямую
+                        itemBuilder: (context, index) {
+                          Rod rod = rods![index]; // Получаем объект Rod
+                          return RodTile(
+                            rod: rod,
+                            // Удаляем rodData, если он не нужен
+                          );
+                        },
+                      ),
+                    ),
+                  )
+                ])));
   }
 }

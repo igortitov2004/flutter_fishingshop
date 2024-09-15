@@ -4,16 +4,25 @@ import 'package:fishingshop/model/typeOfRod.dart';
 import 'package:fishingshop/service/api_service.dart';
 import 'package:flutter/material.dart';
 
-class RodCreateScreen extends StatefulWidget {
-  const RodCreateScreen({Key? key}) : super(key: key);
+class RodEditScreen extends StatefulWidget {
+  const RodEditScreen({Key? key}) : super(key: key);
 
   @override
-  _RodCreateScreenState createState() => _RodCreateScreenState();
+  _RodEditScreenState createState() => _RodEditScreenState();
 }
 
-class _RodCreateScreenState extends State<RodCreateScreen> {
+class _RodEditScreenState extends State<RodEditScreen> {
+  Rod? rod;
   int? selectedManufacturerId;
   int? selectedTypeOfRodId;
+  @override
+  void didChangeDependencies() {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    rod = args as Rod;
+
+    super.didChangeDependencies();
+  }
+
   List<Manufacturer>? manufacturers;
   List<TypeOfRod>? typesOfRod;
   getManufacturers() async {
@@ -53,10 +62,10 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
             ),
           )
         : Scaffold(
-           backgroundColor: Colors.white,
+            backgroundColor: Colors.white,
             appBar: AppBar(
               surfaceTintColor: Colors.transparent,
-              title: Text('Добавление удилища'),
+              title: Text('Изменение удилища'),
               backgroundColor: Colors.white,
             ),
             body: SingleChildScrollView(
@@ -68,6 +77,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                     children: [
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Название'),
+                        initialValue: rod!.name,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return '';
@@ -81,6 +91,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Длина'),
                         keyboardType: TextInputType.number,
+                        initialValue: rod!.length.toString(),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return '';
@@ -94,6 +105,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Вес'),
                         keyboardType: TextInputType.number,
+                        initialValue: rod!.weight.toString(),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return '';
@@ -108,6 +120,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                         decoration: InputDecoration(
                             labelText: 'Нагрузочная способность'),
                         keyboardType: TextInputType.number,
+                        initialValue: rod!.testLoad.toString(),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return '';
@@ -120,6 +133,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                       ),
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Цена'),
+                        initialValue: rod!.price.toString(),
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -218,6 +232,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
 
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Ссылка'),
+                        initialValue: rod!.link,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return '';

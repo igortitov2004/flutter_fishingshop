@@ -29,7 +29,7 @@ class RodTile extends StatelessWidget {
       color: const Color.fromARGB(255, 255, 255, 255),
       child: InkWell(
         onTap: () {
-          Navigator.pushNamed(context, '/details', arguments: rod);
+          Navigator.pushNamed(context, '/rodsDetails', arguments: rod);
         },
         child: Padding(
           padding: const EdgeInsets.all(10),

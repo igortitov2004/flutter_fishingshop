@@ -1,4 +1,5 @@
 import 'package:fishingshop/model/rod.dart';
+import 'package:fishingshop/service/api_service.dart';
 import 'package:flutter/material.dart';
 
 class RodDetails extends StatefulWidget {
@@ -28,8 +29,9 @@ class _RodDetailsState extends State<RodDetails> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          surfaceTintColor: Colors.transparent,
           title: Text(rod!.name),
-          backgroundColor: const Color(0xffffffff),
+           backgroundColor: Colors.white,
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -47,9 +49,11 @@ class _RodDetailsState extends State<RodDetails> {
 
                 Text(
                   "Удилище " +
-                      rod!.type.type + 
-                      " " + rod!.manufacturer.name +
-                      " " + rod!.name +
+                      rod!.type.type +
+                      " " +
+                      rod!.manufacturer.name +
+                      " " +
+                      rod!.name +
                       " \n" +
                       rod!.length.toString() +
                       " м, " +
@@ -88,6 +92,91 @@ class _RodDetailsState extends State<RodDetails> {
                   ),
                 ),
                 const SizedBox(height: 10), // От
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  color: Colors.white,
+                  child: Container(
+                    height: 60,
+                    width: double.infinity,
+                    // Указание высоты контейнера
+                    padding: const EdgeInsets.all(5), // Отступы внутри карточки
+                    child: Column(
+                      // Распределение элементов
+                      children: <Widget>[
+                        const SizedBox(height: 2), // От
+                        Container(
+                            width: double.infinity, // Установите нужную ширину
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      ApiService.deleteRod(rod!.id);
+                                      Navigator.pushNamed(context, '/rods');
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      // Выравнивание по левому краю
+                                      children: [
+                                        Icon(Icons.delete,
+                                            color: Colors.white), // Иконка слева
+                                        SizedBox(
+                                            width:
+                                                8), // Отступ между иконкой и текстом
+                                        const Text(
+                                          'Удалить',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 20),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                       Navigator.pushNamed(context, '/editRod', arguments: rod as Rod);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.amber,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      // Выравнивание по левому краю
+                                      children: [
+                                        Icon(Icons.edit,
+                                            color: Colors.white
+                                          ), // Иконка слева
+                                        SizedBox(
+                                            width:
+                                                8), // Отступ между иконкой и текстом
+                                        const Text(
+                                          'Изменить',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ]))
+                      ],
+                    ),
+                  ),
+                ),
                 Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),

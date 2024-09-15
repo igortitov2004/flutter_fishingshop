@@ -74,4 +74,23 @@ class ApiService {
       ));
     }*/
   }
+
+  static Future<void> deleteRod(int rodId) async {
+    var url = Uri.parse(baseURL + '/rods/'+rodId.toString());
+    http.Response response = await http.delete(
+      url,
+      headers: headers,
+    );
+     print(response.body);
+    
+   /*if (response.statusCode == 201) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("Post created successfully!"),
+      ));
+    } else {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text("Failed to create post!"),
+      ));
+    }*/
+  }
 }
