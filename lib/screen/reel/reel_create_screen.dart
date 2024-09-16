@@ -1,37 +1,30 @@
+import 'package:fishingshop/DTOs/reel_create_request.dart';
 import 'package:fishingshop/model/manufacturer.dart';
-import 'package:fishingshop/model/rod.dart';
-import 'package:fishingshop/model/typeOfRod.dart';
-import 'package:fishingshop/service/api_service.dart';
+import 'package:fishingshop/model/typeOfReel.dart';
+import 'package:fishingshop/service/manufacturer_repository.dart';
+import 'package:fishingshop/service/reel_repository.dart';
+import 'package:fishingshop/service/type_of_reel_repository.dart';
 import 'package:flutter/material.dart';
 
-class RodEditScreen extends StatefulWidget {
-  const RodEditScreen({Key? key}) : super(key: key);
+class ReelCreateScreen extends StatefulWidget {
+  const ReelCreateScreen({Key? key}) : super(key: key);
 
   @override
-  _RodEditScreenState createState() => _RodEditScreenState();
+  _ReelCreateScreenState createState() => _ReelCreateScreenState();
 }
 
-class _RodEditScreenState extends State<RodEditScreen> {
-  Rod? rod;
+class _ReelCreateScreenState extends State<ReelCreateScreen> {
   int? selectedManufacturerId;
-  int? selectedTypeOfRodId;
-  @override
-  void didChangeDependencies() {
-    final args = ModalRoute.of(context)?.settings.arguments;
-    rod = args as Rod;
-
-    super.didChangeDependencies();
-  }
-
+  int? selectedTypeOfReelId;
   List<Manufacturer>? manufacturers;
-  List<TypeOfRod>? typesOfRod;
+  List<TypeOfReel>? typesOfReel;
   getManufacturers() async {
-    manufacturers = await ApiService.getManufacturers();
+    manufacturers = await ManufacturerRepository.getManufacturers();
     setState(() {});
   }
 
   getTypesOfRod() async {
-    typesOfRod = await ApiService.getTypesOfRod();
+    typesOfReel = await TypeOfReelRepository.getTypesOfReel();
     setState(() {});
   }
 
@@ -44,29 +37,35 @@ class _RodEditScreenState extends State<RodEditScreen> {
 
   final _formKey = GlobalKey<FormState>();
   late String name;
-  late int length;
-  late int weight;
-  late int testLoad;
   late double price;
   late int typeId = 0; // Предполагается, что это будет выбранный тип
-  late int manufacturerId =
-      0; // Предполагается, что это будет выбранный производитель
+  late int manufacturerId = 0; // Предполагается, что это будет выбранный производитель
   late String link;
 
   @override
   Widget build(BuildContext context) {
     return manufacturers == null
         ? const Scaffold(
+           backgroundColor: Colors.white,
             body: Center(
               child: CircularProgressIndicator(),
             ),
           )
         : Scaffold(
-            backgroundColor: Colors.white,
+           backgroundColor: Colors.white,
             appBar: AppBar(
               surfaceTintColor: Colors.transparent,
-              title: Text('Изменение удилища'),
+              title: Text('Добавление катушки'),
               backgroundColor: Colors.white,
+             /* automaticallyImplyLeading: false,
+          leading: IconButton(
+            
+            icon: Icon(Icons.keyboard_arrow_left), // Иконка кнопки
+            onPressed: () {
+              Navigator.pushNamed(context,'/reels');
+              print('Кнопка нажата');
+            },
+          ),*/
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -77,7 +76,6 @@ class _RodEditScreenState extends State<RodEditScreen> {
                     children: [
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Название'),
-                        initialValue: rod!.name,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return '';
@@ -89,51 +87,7 @@ class _RodEditScreenState extends State<RodEditScreen> {
                         },
                       ),
                       TextFormField(
-                        decoration: InputDecoration(labelText: 'Длина'),
-                        keyboardType: TextInputType.number,
-                        initialValue: rod!.length.toString(),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          length = int.parse(value!);
-                        },
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(labelText: 'Вес'),
-                        keyboardType: TextInputType.number,
-                        initialValue: rod!.weight.toString(),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          weight = int.parse(value!);
-                        },
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(
-                            labelText: 'Нагрузочная способность'),
-                        keyboardType: TextInputType.number,
-                        initialValue: rod!.testLoad.toString(),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          testLoad = int.parse(value!);
-                        },
-                      ),
-                      TextFormField(
                         decoration: InputDecoration(labelText: 'Цена'),
-                        initialValue: rod!.price.toString(),
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -194,17 +148,17 @@ class _RodEditScreenState extends State<RodEditScreen> {
                                 fontSize: 16,
                               ),
                             ),
-                            value: selectedTypeOfRodId,
+                            value: selectedTypeOfReelId,
                             onChanged: (int? newValue) {
                               setState(() {
-                                selectedTypeOfRodId = newValue;
+                                selectedTypeOfReelId = newValue;
                               });
                             },
-                            items: typesOfRod!.map<DropdownMenuItem<int>>(
-                                (TypeOfRod typeOfRod) {
+                            items: typesOfReel!.map<DropdownMenuItem<int>>(
+                                (TypeOfReel typeOfReel) {
                               return DropdownMenuItem<int>(
-                                value: typeOfRod.id,
-                                child: Text(typeOfRod.type),
+                                value: typeOfReel.id,
+                                child: Text(typeOfReel.type),
                               );
                             }).toList(),
                           ),
@@ -232,7 +186,6 @@ class _RodEditScreenState extends State<RodEditScreen> {
 
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Ссылка'),
-                        initialValue: rod!.link,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return '';
@@ -248,31 +201,21 @@ class _RodEditScreenState extends State<RodEditScreen> {
                         onPressed: () {
                           if (_formKey.currentState!.validate() &&
                               selectedManufacturerId != 0 &&
-                              selectedTypeOfRodId != 0) {
+                              selectedTypeOfReelId != 0) {
                             manufacturerId = selectedManufacturerId!;
-                            typeId = selectedTypeOfRodId!;
+                            typeId = selectedTypeOfReelId!;
                             _formKey.currentState!.save();
-                            Rod newRod = Rod(
-                              id: 0,
+                            ReelCreateRequest request = ReelCreateRequest(
                               name: name,
-                              length: length,
-                              weight: weight,
-                              testLoad: testLoad,
                               price: price,
-                              type: TypeOfRod(
-                                  id: typeId,
-                                  type:
-                                      ""), // Здесь нужно получить выбранный тип
-                              manufacturer: Manufacturer(
-                                  id: manufacturerId,
-                                  name:
-                                      ""), // Здесь нужно получить выбранного производителя
+                              typeId: typeId, // Здесь нужно получить выбранный тип
+                              manufacturerId: manufacturerId, // Здесь нужно получить выбранного производителя
                               link: link,
                             );
 
                             // Здесь можно сохранить новый объект Rod в базе данных или отправить на сервер
-                            ApiService.addRod(newRod);
-                            Navigator.pushNamed(context, '/');
+                            ReelRepository.addReel(request);
+                            Navigator.pushNamed(context, '/reels');
                             // Закрыть страницу после сохранения
                           }
                         },

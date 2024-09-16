@@ -1,8 +1,12 @@
 import 'package:fishingshop/screen/main_screen.dart';
-import 'package:fishingshop/screen/rod_create_screen.dart';
-import 'package:fishingshop/screen/rod_details.dart';
-import 'package:fishingshop/screen/rod_edit_screen.dart';
-import 'package:fishingshop/screen/rods_screen.dart';
+import 'package:fishingshop/screen/reel/reel_create_screen.dart';
+import 'package:fishingshop/screen/reel/reel_details.dart';
+import 'package:fishingshop/screen/reel/reel_edit_screen.dart';
+import 'package:fishingshop/screen/reel/reel_screen.dart';
+import 'package:fishingshop/screen/rod/rod_create_screen.dart';
+import 'package:fishingshop/screen/rod/rod_details.dart';
+import 'package:fishingshop/screen/rod/rod_edit_screen.dart';
+import 'package:fishingshop/screen/rod/rods_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -12,7 +16,6 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -28,6 +31,10 @@ class MyApp extends StatelessWidget {
         '/rodsDetails': (context) => const RodDetails(),
          '/addRod': (context) => const RodCreateScreen(),
          '/editRod': (context) => const RodEditScreen(),
+         '/reels': (context) => const ReelsScreen(),
+         '/reelsDetails': (context) => const ReelDetails(),
+         '/addReel': (context) => const ReelCreateScreen(),
+         '/editReel': (context) => const ReelEditScreen(),
       },
     );
   }

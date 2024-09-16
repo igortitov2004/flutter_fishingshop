@@ -1,45 +1,48 @@
+import 'package:fishingshop/DTOs/rod_edit_request.dart';
 import 'package:fishingshop/model/manufacturer.dart';
 import 'package:fishingshop/model/rod.dart';
 import 'package:fishingshop/model/typeOfRod.dart';
-import 'package:fishingshop/service/api_service.dart';
+import 'package:fishingshop/service/manufacturer_repository.dart';
+import 'package:fishingshop/service/rod_repository.dart';
 import 'package:flutter/material.dart';
 
-class RodCreateScreen extends StatefulWidget {
-  const RodCreateScreen({Key? key}) : super(key: key);
+class RodEditScreen extends StatefulWidget {
+  const RodEditScreen({Key? key}) : super(key: key);
 
   @override
-  _RodCreateScreenState createState() => _RodCreateScreenState();
+  _RodEditScreenState createState() => _RodEditScreenState();
 }
 
-class _RodCreateScreenState extends State<RodCreateScreen> {
+class _RodEditScreenState extends State<RodEditScreen> {
+  Rod? rod;
   int? selectedManufacturerId;
-  int? selectedTypeOfRodId;
+  @override
+  void didChangeDependencies() {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    rod = args as Rod;
+    
+    super.didChangeDependencies();
+  }
+
   List<Manufacturer>? manufacturers;
   List<TypeOfRod>? typesOfRod;
   getManufacturers() async {
-    manufacturers = await ApiService.getManufacturers();
+    manufacturers = await ManufacturerRepository.getManufacturers();
+    selectedManufacturerId = rod!.manufacturer.id;
     setState(() {});
   }
 
-  getTypesOfRod() async {
-    typesOfRod = await ApiService.getTypesOfRod();
-    setState(() {});
-  }
+  
 
   @override
   void initState() {
     super.initState();
     getManufacturers();
-    getTypesOfRod();
   }
 
   final _formKey = GlobalKey<FormState>();
   late String name;
-  late int length;
-  late int weight;
-  late int testLoad;
   late double price;
-  late int typeId = 0; // Предполагается, что это будет выбранный тип
   late int manufacturerId =
       0; // Предполагается, что это будет выбранный производитель
   late String link;
@@ -48,16 +51,26 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
   Widget build(BuildContext context) {
     return manufacturers == null
         ? const Scaffold(
+           backgroundColor: Colors.white,
             body: Center(
               child: CircularProgressIndicator(),
             ),
           )
         : Scaffold(
-           backgroundColor: Colors.white,
+            backgroundColor: Colors.white,
             appBar: AppBar(
               surfaceTintColor: Colors.transparent,
-              title: Text('Добавление удилища'),
+              title: Text('Изменение удилища'),
               backgroundColor: Colors.white,
+              /*automaticallyImplyLeading: false,
+              leading: IconButton(
+            
+            icon: Icon(Icons.keyboard_arrow_left), // Иконка кнопки
+            onPressed: () {
+              Navigator.pushNamed(context,'/rodDetails');
+              print('Кнопка нажата');
+            },
+          ),*/
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -68,6 +81,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                     children: [
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Название'),
+                        initialValue: rod!.name,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return '';
@@ -78,48 +92,10 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                           name = value!;
                         },
                       ),
-                      TextFormField(
-                        decoration: InputDecoration(labelText: 'Длина'),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          length = int.parse(value!);
-                        },
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(labelText: 'Вес'),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          weight = int.parse(value!);
-                        },
-                      ),
-                      TextFormField(
-                        decoration: InputDecoration(
-                            labelText: 'Нагрузочная способность'),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return '';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          testLoad = int.parse(value!);
-                        },
-                      ),
+                      
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Цена'),
+                        initialValue: rod!.price.toString(),
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -143,7 +119,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                             hint: Text(
                               'Выберите производителя',
                               style: TextStyle(
-                                color: manufacturerId != 0
+                                color: selectedManufacturerId != null
                                     ? Colors.black
                                     : Colors.red,
                                 fontSize: 16,
@@ -165,37 +141,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                           ),
                         ),
                       ),
-                      InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'Тип',
-                          // Добавьте рамку для визуального оформления
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<int>(
-                            menuWidth: 300,
-                            hint: Text(
-                              'Выберите тип',
-                              style: TextStyle(
-                                color: typeId != 0 ? Colors.black : Colors.red,
-                                fontSize: 16,
-                              ),
-                            ),
-                            value: selectedTypeOfRodId,
-                            onChanged: (int? newValue) {
-                              setState(() {
-                                selectedTypeOfRodId = newValue;
-                              });
-                            },
-                            items: typesOfRod!.map<DropdownMenuItem<int>>(
-                                (TypeOfRod typeOfRod) {
-                              return DropdownMenuItem<int>(
-                                value: typeOfRod.id,
-                                child: Text(typeOfRod.type),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
+                      
                       SizedBox(height: 20),
                       /*Text(
                         selectedManufacturerId != null
@@ -218,6 +164,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
 
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Ссылка'),
+                        initialValue: rod!.link,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return '';
@@ -232,22 +179,14 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                       ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate() &&
-                              selectedManufacturerId != 0 &&
-                              selectedTypeOfRodId != 0) {
+                              selectedManufacturerId != 0) {
                             manufacturerId = selectedManufacturerId!;
-                            typeId = selectedTypeOfRodId!;
                             _formKey.currentState!.save();
-                            Rod newRod = Rod(
-                              id: 0,
+                            RodEditRequest request = RodEditRequest(
+                              id: rod!.id,
                               name: name,
-                              length: length,
-                              weight: weight,
-                              testLoad: testLoad,
+                              
                               price: price,
-                              type: TypeOfRod(
-                                  id: typeId,
-                                  type:
-                                      ""), // Здесь нужно получить выбранный тип
                               manufacturer: Manufacturer(
                                   id: manufacturerId,
                                   name:
@@ -256,8 +195,8 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                             );
 
                             // Здесь можно сохранить новый объект Rod в базе данных или отправить на сервер
-                            ApiService.addRod(newRod);
-                            Navigator.pushNamed(context, '/');
+                            RodRepository.editRod(request);
+                            Navigator.pushNamed(context, '/rods');
                             // Закрыть страницу после сохранения
                           }
                         },

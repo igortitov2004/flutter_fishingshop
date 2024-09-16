@@ -1,21 +1,21 @@
-import 'package:fishingshop/model/rod.dart';
-import 'package:fishingshop/service/api_service.dart';
+import 'package:fishingshop/model/reel.dart';
+import 'package:fishingshop/service/reel_repository.dart';
 import 'package:flutter/material.dart';
 
-class RodDetails extends StatefulWidget {
-  const RodDetails({Key? key}) : super(key: key);
+class ReelDetails extends StatefulWidget {
+  const ReelDetails({Key? key}) : super(key: key);
 
   @override
-  _RodDetailsState createState() => _RodDetailsState();
+  _ReelDetailsState createState() => _ReelDetailsState();
 }
 
-class _RodDetailsState extends State<RodDetails> {
-  Rod? rod;
+class _ReelDetailsState extends State<ReelDetails> {
+  Reel? reel;
 
   @override
   void didChangeDependencies() {
     final args = ModalRoute.of(context)?.settings.arguments;
-    rod = args as Rod;
+    reel = args as Reel;
     super.didChangeDependencies();
   }
 
@@ -30,8 +30,17 @@ class _RodDetailsState extends State<RodDetails> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           surfaceTintColor: Colors.transparent,
-          title: Text(rod!.name),
+          title: Text(reel!.name),
            backgroundColor: Colors.white,
+           /*automaticallyImplyLeading: false,
+          leading: IconButton(
+            
+            icon: Icon(Icons.keyboard_arrow_left), // Иконка кнопки
+            onPressed: () {
+              Navigator.pushNamed(context,'/reels');
+              print('Кнопка нажата');
+            },
+          ),*/
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -40,7 +49,7 @@ class _RodDetailsState extends State<RodDetails> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Image.network(
-                  rod!.link,
+                  reel!.link,
                   height: 350, // Увеличенная высота изображения
                   width: 350,
                 ),
@@ -48,17 +57,13 @@ class _RodDetailsState extends State<RodDetails> {
                 // Текст
 
                 Text(
-                  "Удилище " +
-                      rod!.type.type +
+                  "Катушка " +
+                      reel!.type.type +
                       " " +
-                      rod!.manufacturer.name +
+                      reel!.manufacturer.name +
                       " " +
-                      rod!.name +
-                      " \n" +
-                      rod!.length.toString() +
-                      " м, " +
-                      rod!.testLoad.toString() +
-                      " г",
+                      reel!.name +
+                      " \n",
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 22,
@@ -76,16 +81,8 @@ class _RodDetailsState extends State<RodDetails> {
                 const SizedBox(height: 5), // От
                 Text(
                   "Производитель - " +
-                      rod!.manufacturer.name +
-                      "\n" +
-                      "Длина, м. - " +
-                      rod!.length.toString() +
-                      "\n" +
-                      "Тест до гр. " +
-                      rod!.testLoad.toString() +
-                      "\n" +
-                      "Вес (гр.) - " +
-                      rod!.weight.toString(),
+                      reel!.manufacturer.name +
+                      "\n",
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 16,
@@ -113,8 +110,8 @@ class _RodDetailsState extends State<RodDetails> {
                                 children: [
                                   ElevatedButton(
                                     onPressed: () {
-                                      ApiService.deleteRod(rod!.id);
-                                      Navigator.pushNamed(context, '/rods');
+                                      ReelRepository.deleteReel(reel!.id);
+                                      Navigator.pushNamed(context, '/reels');
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.red,
@@ -144,7 +141,7 @@ class _RodDetailsState extends State<RodDetails> {
                                   const SizedBox(width: 20),
                                   ElevatedButton(
                                     onPressed: () {
-                                       Navigator.pushNamed(context, '/editRod', arguments: rod as Rod);
+                                       Navigator.pushNamed(context, '/editReel', arguments: reel as Reel);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.amber,
@@ -198,7 +195,7 @@ class _RodDetailsState extends State<RodDetails> {
                               padding: const EdgeInsets.only(
                                   left: 10), // Отступ слева
                               child: Text(
-                                '${rod!.price} BYN', // Интерполяция строки
+                                '${reel!.price} BYN', // Интерполяция строки
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
