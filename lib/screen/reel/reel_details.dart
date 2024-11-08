@@ -125,6 +125,7 @@ class _ReelDetailsState extends State<ReelDetails> {
                                       onPressed: () {
                                         ReelRepository.deleteReel(reel!.id);
                                         Navigator.pushNamed(context, '/reels');
+                                  
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.red,

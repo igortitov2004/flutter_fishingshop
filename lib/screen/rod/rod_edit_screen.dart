@@ -111,7 +111,7 @@ class _RodEditScreenState extends State<RodEditScreen> {
               surfaceTintColor: Colors.transparent,
               title: Text('Изменение удилища'),
               backgroundColor: Colors.white,
-              
+
               /*automaticallyImplyLeading: false,
               leading: IconButton(
             
@@ -233,6 +233,7 @@ class _RodEditScreenState extends State<RodEditScreen> {
 
                             // Здесь можно сохранить новый объект Rod в базе данных или отправить на сервер
                             RodRepository.editRod(request);
+                            //Navigator.pop(context, true);
                             Navigator.pushNamed(context, '/rods');
                             // Закрыть страницу после сохранения
                           }

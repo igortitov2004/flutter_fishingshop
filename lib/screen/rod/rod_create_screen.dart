@@ -333,7 +333,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
 
                             // Здесь можно сохранить новый объект Rod в базе данных или отправить на сервер
                             RodRepository.addRod(request);
-                            Navigator.pushNamed(context, '/rods');
+                            Navigator.pop(context,true);
                           }
                         },
                         style: ElevatedButton.styleFrom(

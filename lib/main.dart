@@ -1,3 +1,4 @@
+import 'package:fishingshop/model/reel.dart';
 import 'package:fishingshop/screen/cart/cart_screen.dart';
 import 'package:fishingshop/screen/main_screen.dart';
 import 'package:fishingshop/screen/manufacturers/manufacturers_screen.dart';
@@ -11,6 +12,7 @@ import 'package:fishingshop/screen/rod/rod_details.dart';
 import 'package:fishingshop/screen/rod/rod_edit_screen.dart';
 import 'package:fishingshop/screen/rod/rods_screen.dart';
 import 'package:fishingshop/screen/sign_in_screen.dart';
+import 'package:fishingshop/screen/types/types_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -52,6 +54,7 @@ class MyApp extends StatelessWidget {
          '/carts':(context) => const CartScreen(),
          '/register':(context) => const RegisterPage(),
          '/manufacturers':(context) => const ManufacturersScreen(),
+          '/types':(context) => const ReelAndRodTypesScreen(),
       },
     );
   }

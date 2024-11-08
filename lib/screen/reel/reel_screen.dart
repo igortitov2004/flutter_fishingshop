@@ -22,6 +22,8 @@ class _ReelsScreenState extends State<ReelsScreen> {
     setState(() {});
   }
 
+
+
   @override
   void initState() {
     super.initState();
@@ -141,10 +143,9 @@ class _ReelsScreenState extends State<ReelsScreen> {
                   ),
                   Expanded(
                     child: GridView.builder(
-                      gridDelegate:
-                           SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: role==null ? 0.7 : 0.6,
+                        childAspectRatio: role == null ? 0.7 : 0.6,
                         crossAxisSpacing: 1,
                         mainAxisSpacing: 1,
                       ),
@@ -152,7 +153,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
                           .length, // Используем отфильтрованный список
                       itemBuilder: (context, index) {
                         Reel reel = filteredReels[index]; // Получаем объект Rod
-                        return ReelTile(reel: reel,role: role);
+                        return ReelTile(reel: reel, role: role);
                       },
                     ),
                   ),

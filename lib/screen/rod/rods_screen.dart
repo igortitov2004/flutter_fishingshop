@@ -18,9 +18,13 @@ class _RodsScreenState extends State<RodsScreen> {
   bool isAscending = true; // Флаг для сортировки
   String? role;
   getRods() async {
-    rods = await RodRepository.getRods();
-    setState(() {});
+     rods = await RodRepository.getRods(); 
+     setState(() {
+       
+     });
   }
+
+  
 
   @override
   void initState() {
@@ -55,6 +59,7 @@ class _RodsScreenState extends State<RodsScreen> {
     } else {
       filteredRods.sort((a, b) => b.price.compareTo(a.price));
     }
+    
 
     return rods == null
         ? const Scaffold(
@@ -82,7 +87,7 @@ class _RodsScreenState extends State<RodsScreen> {
                     icon: const Icon(Icons.add, color: Colors.blue),
                     onPressed: () {
                       Navigator.pushNamed(context, '/addRod');
-                    },
+                    }
                   ),
               ],
               /* automaticallyImplyLeading: false,
@@ -147,10 +152,9 @@ class _RodsScreenState extends State<RodsScreen> {
                   ),
                   Expanded(
                     child: GridView.builder(
-                      gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: role==null ? 0.65 : 0.55,
+                        childAspectRatio: role == null ? 0.65 : 0.55,
                         crossAxisSpacing: 1,
                         mainAxisSpacing: 1,
                       ),
@@ -158,7 +162,7 @@ class _RodsScreenState extends State<RodsScreen> {
                           .length, // Используем отфильтрованный список
                       itemBuilder: (context, index) {
                         Rod rod = filteredRods[index]; // Получаем объект Rod
-                        return RodTile(rod: rod,role: role);
+                        return RodTile(rod: rod, role: role);
                       },
                     ),
                   ),
