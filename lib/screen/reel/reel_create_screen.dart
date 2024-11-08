@@ -18,54 +18,148 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
   int? selectedTypeOfReelId;
   List<Manufacturer>? manufacturers;
   List<TypeOfReel>? typesOfReel;
-  getManufacturers() async {
-    manufacturers = await ManufacturerRepository.getManufacturers();
-    setState(() {});
-  }
-
-  getTypesOfRod() async {
-    typesOfReel = await TypeOfReelRepository.getTypesOfReel();
-    setState(() {});
-  }
 
   @override
   void initState() {
     super.initState();
     getManufacturers();
-    getTypesOfRod();
+    getTypesOfReel();
+  }
+
+  Future<void> getManufacturers() async {
+    manufacturers = await ManufacturerRepository.getManufacturers();
+    setState(() {});
+  }
+
+  Future<void> getTypesOfReel() async {
+    typesOfReel = await TypeOfReelRepository.getTypesOfReel();
+    setState(() {});
   }
 
   final _formKey = GlobalKey<FormState>();
   late String name;
   late double price;
-  late int typeId = 0; // Предполагается, что это будет выбранный тип
-  late int manufacturerId = 0; // Предполагается, что это будет выбранный производитель
   late String link;
+
+  void _showManufacturerMenu(BuildContext context) async {
+    final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
+    final RenderBox button = context.findRenderObject() as RenderBox;
+
+    await showMenu<int>(
+      color: Colors.white,
+      context: context,
+      position: RelativeRect.fromLTRB(
+        button.localToGlobal(Offset.zero).dx,
+        button.localToGlobal(Offset.zero).dy + 270,
+        button.localToGlobal(Offset.zero).dx + button.size.width,
+        button.localToGlobal(Offset.zero).dy,
+      ),
+      items: [
+        PopupMenuItem<int>(
+          enabled: false,
+          child: Container(
+            height: 200,
+            width: 300,
+            child: Scrollbar(
+              thumbVisibility: true,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: manufacturers!.map<Widget>((Manufacturer manufacturer) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedManufacturerId = manufacturer.id;
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 40,
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(manufacturer.name, style: TextStyle(color: Colors.black)),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+      elevation: 8.0,
+    );
+  }
+
+  void _showTypeOfReelMenu(BuildContext context) async {
+    final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
+    final RenderBox button = context.findRenderObject() as RenderBox;
+
+    await showMenu<int>(
+      color: Colors.white,
+      context: context,
+      position: RelativeRect.fromLTRB(
+        button.localToGlobal(Offset.zero).dx,
+        button.localToGlobal(Offset.zero).dy + 340,
+        button.localToGlobal(Offset.zero).dx + button.size.width,
+        button.localToGlobal(Offset.zero).dy,
+      ),
+      items: [
+        PopupMenuItem<int>(
+          enabled: false,
+          child: Container(
+            height: 200,
+            width: 300,
+            child: Scrollbar(
+              thumbVisibility: true,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: typesOfReel!.map<Widget>((TypeOfReel typeOfReel) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedTypeOfReelId = typeOfReel.id;
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 40,
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(typeOfReel.type, style: TextStyle(color: Colors.black)),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+      elevation: 8.0,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return manufacturers == null
+    return manufacturers == null || typesOfReel == null
         ? const Scaffold(
-           backgroundColor: Colors.white,
+            backgroundColor: Colors.white,
             body: Center(
               child: CircularProgressIndicator(),
             ),
           )
         : Scaffold(
-           backgroundColor: Colors.white,
+            backgroundColor: Colors.white,
             appBar: AppBar(
-              surfaceTintColor: Colors.transparent,
               title: Text('Добавление катушки'),
               backgroundColor: Colors.white,
-             /* automaticallyImplyLeading: false,
-          leading: IconButton(
-            
-            icon: Icon(Icons.keyboard_arrow_left), // Иконка кнопки
-            onPressed: () {
-              Navigator.pushNamed(context,'/reels');
-              print('Кнопка нажата');
-            },
-          ),*/
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  Navigator.pushNamed(context,
+                      '/reels'); // Убедитесь, что маршрут '/login' определен
+                },
+              ),
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -78,7 +172,7 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
                         decoration: InputDecoration(labelText: 'Название'),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '';
+                            return 'Введите название';
                           }
                           return null;
                         },
@@ -91,7 +185,7 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '';
+                            return 'Введите цену';
                           }
                           return null;
                         },
@@ -99,96 +193,51 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
                           price = double.parse(value!);
                         },
                       ),
-
-                      InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'Производитель',
-                          // Добавьте рамку для визуального оформления
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<int>(
-                            menuWidth: 300,
-                            hint: Text(
-                              'Выберите производителя',
+                      GestureDetector(
+                        onTap: () => _showManufacturerMenu(context),
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: 'Производитель',
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            child: Text(
+                              selectedManufacturerId != null
+                                  ? manufacturers!.firstWhere((m) => m.id == selectedManufacturerId).name
+                                  : 'Выберите производителя',
                               style: TextStyle(
-                                color: manufacturerId != 0
-                                    ? Colors.black
-                                    : Colors.red,
+                                color: selectedManufacturerId != null ? Colors.black : Colors.red,
                                 fontSize: 16,
                               ),
                             ),
-                            value: selectedManufacturerId,
-                            onChanged: (int? newValue) {
-                              setState(() {
-                                selectedManufacturerId = newValue;
-                              });
-                            },
-                            items: manufacturers!.map<DropdownMenuItem<int>>(
-                                (Manufacturer manufacturer) {
-                              return DropdownMenuItem<int>(
-                                value: manufacturer.id,
-                                child: Text(manufacturer.name),
-                              );
-                            }).toList(),
                           ),
                         ),
                       ),
-                      InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'Тип',
-                          // Добавьте рамку для визуального оформления
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<int>(
-                            menuWidth: 300,
-                            hint: Text(
-                              'Выберите тип',
+                      GestureDetector(
+                        onTap: () => _showTypeOfReelMenu(context),
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: 'Тип',
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            child: Text(
+                              selectedTypeOfReelId != null
+                                  ? typesOfReel!.firstWhere((t) => t.id == selectedTypeOfReelId).type
+                                  : 'Выберите тип',
                               style: TextStyle(
-                                color: typeId != 0 ? Colors.black : Colors.red,
+                                color: selectedTypeOfReelId != null ? Colors.black : Colors.red,
                                 fontSize: 16,
                               ),
                             ),
-                            value: selectedTypeOfReelId,
-                            onChanged: (int? newValue) {
-                              setState(() {
-                                selectedTypeOfReelId = newValue;
-                              });
-                            },
-                            items: typesOfReel!.map<DropdownMenuItem<int>>(
-                                (TypeOfReel typeOfReel) {
-                              return DropdownMenuItem<int>(
-                                value: typeOfReel.id,
-                                child: Text(typeOfReel.type),
-                              );
-                            }).toList(),
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
-                      /*Text(
-                        selectedManufacturerId != null
-                            ? 'Selected Manufacturer ID: $selectedManufacturerId'
-                            : 'No manufacturer selected',
-                        style: TextStyle(fontSize: 16),
-                      ),
-
-                      SizedBox(height: 20),
-                      Text(
-                        selectedManufacturerId != null
-                            ? 'Selected: $selectedManufacturerId'
-                            : 'No option selected',
-                        style: TextStyle(fontSize: 16),
-                      ),*/
-
-                      // Здесь можно добавить выбор типа удилища и производителя
-
-                      // Например, используя DropdownButton или другой виджет
-
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Ссылка'),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '';
+                            return 'Введите ссылку';
                           }
                           return null;
                         },
@@ -200,23 +249,20 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
                       ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate() &&
-                              selectedManufacturerId != 0 &&
-                              selectedTypeOfReelId != 0) {
-                            manufacturerId = selectedManufacturerId!;
-                            typeId = selectedTypeOfReelId!;
+                              selectedManufacturerId != null &&
+                              selectedTypeOfReelId != null) {
                             _formKey.currentState!.save();
                             ReelCreateRequest request = ReelCreateRequest(
                               name: name,
                               price: price,
-                              typeId: typeId, // Здесь нужно получить выбранный тип
-                              manufacturerId: manufacturerId, // Здесь нужно получить выбранного производителя
+                              typeId: selectedTypeOfReelId!,
+                              manufacturerId: selectedManufacturerId!,
                               link: link,
                             );
 
-                            // Здесь можно сохранить новый объект Rod в базе данных или отправить на сервер
+                            // Здесь можно сохранить новый объект Reel в базе данных или отправить на сервер
                             ReelRepository.addReel(request);
                             Navigator.pushNamed(context, '/reels');
-                            // Закрыть страницу после сохранения
                           }
                         },
                         style: ElevatedButton.styleFrom(

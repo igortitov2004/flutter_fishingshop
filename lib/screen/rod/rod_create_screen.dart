@@ -18,15 +18,6 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
   int? selectedTypeOfRodId;
   List<Manufacturer>? manufacturers;
   List<TypeOfRod>? typesOfRod;
-  getManufacturers() async {
-    manufacturers = await ManufacturerRepository.getManufacturers();
-    setState(() {});
-  }
-
-  getTypesOfRod() async {
-    typesOfRod = await TypeOfRodRepository.getTypesOfRod();
-    setState(() {});
-  }
 
   @override
   void initState() {
@@ -35,40 +26,154 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
     getTypesOfRod();
   }
 
+  Future<void> getManufacturers() async {
+    manufacturers = await ManufacturerRepository.getManufacturers();
+    setState(() {});
+  }
+
+  Future<void> getTypesOfRod() async {
+    typesOfRod = await TypeOfRodRepository.getTypesOfRod();
+    setState(() {});
+  }
+
   final _formKey = GlobalKey<FormState>();
   late String name;
   late int length;
   late int weight;
   late int testLoad;
   late double price;
-  late int typeId = 0; // Предполагается, что это будет выбранный тип
-  late int manufacturerId = 0; // Предполагается, что это будет выбранный производитель
+  late int typeId = 0;
+  late int manufacturerId = 0;
   late String link;
+
+  void _showManufacturerMenu(BuildContext context) async {
+    final RenderBox overlay =
+        Overlay.of(context)!.context.findRenderObject() as RenderBox;
+    final RenderBox button =
+        context.findRenderObject() as RenderBox; // Получаем позицию кнопки
+
+    await showMenu<int>(
+      color: Colors.white,
+      context: context,
+      position: RelativeRect.fromLTRB(
+        button.localToGlobal(Offset.zero).dx,
+        button.localToGlobal(Offset.zero).dy + 170, // Позиция над кнопкой
+        button.localToGlobal(Offset.zero).dx + button.size.width,
+        button.localToGlobal(Offset.zero).dy,
+      ),
+      items: [
+        PopupMenuItem<int>(
+          enabled: false,
+          child: Container(
+            height: 200, // Фиксированная высота для списка
+            width: 300,
+            child: Scrollbar(
+              thumbVisibility: true,
+              child: SingleChildScrollView(
+                child: Column(
+                  children:
+                      manufacturers!.map<Widget>((Manufacturer manufacturer) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedManufacturerId = manufacturer.id;
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 40,
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          manufacturer.name,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+      elevation: 8.0,
+    );
+  }
+
+  void _showTypeOfRodMenu(BuildContext context) async {
+    final RenderBox overlay =
+        Overlay.of(context)!.context.findRenderObject() as RenderBox;
+    final RenderBox button =
+        context.findRenderObject() as RenderBox; // Получаем позицию кнопки
+
+    await showMenu<int>(
+      color: Colors.white,
+      context: context,
+      position: RelativeRect.fromLTRB(
+        button.localToGlobal(Offset.zero).dx,
+        button.localToGlobal(Offset.zero).dy + 240, // Позиция над кнопкой
+        button.localToGlobal(Offset.zero).dx + button.size.width,
+        button.localToGlobal(Offset.zero).dy,
+      ),
+      items: [
+        PopupMenuItem<int>(
+          enabled: false,
+          child: Container(
+            height: 200, // Фиксированная высота для списка
+            width: 300,
+            child: Scrollbar(
+              thumbVisibility: true,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: typesOfRod!.map<Widget>((TypeOfRod typeOfRod) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedTypeOfRodId = typeOfRod.id;
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 40,
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(typeOfRod.type,
+                            style: TextStyle(color: Colors.black)),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+      elevation: 8.0,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return manufacturers == null
+    return manufacturers == null || typesOfRod == null
         ? const Scaffold(
-           backgroundColor: Colors.white,
+            backgroundColor: Colors.white,
             body: Center(
               child: CircularProgressIndicator(),
             ),
           )
         : Scaffold(
-           backgroundColor: Colors.white,
+            backgroundColor: Colors.white,
             appBar: AppBar(
-              surfaceTintColor: Colors.transparent,
               title: Text('Добавление удилища'),
               backgroundColor: Colors.white,
-             /* automaticallyImplyLeading: false,
-          leading: IconButton(
-            
-            icon: Icon(Icons.keyboard_arrow_left), // Иконка кнопки
-            onPressed: () {
-              Navigator.pushNamed(context,'/rods');
-              print('Кнопка нажата');
-            },
-          ),*/
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  Navigator.pushNamed(context,
+                      '/rods'); // Убедитесь, что маршрут '/login' определен
+                },
+              ),
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -81,7 +186,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                         decoration: InputDecoration(labelText: 'Название'),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '';
+                            return 'Введите название';
                           }
                           return null;
                         },
@@ -94,7 +199,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '';
+                            return 'Введите длину';
                           }
                           return null;
                         },
@@ -107,7 +212,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '';
+                            return 'Введите вес';
                           }
                           return null;
                         },
@@ -121,7 +226,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '';
+                            return 'Введите нагрузочную способность';
                           }
                           return null;
                         },
@@ -134,7 +239,7 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '';
+                            return 'Введите цену';
                           }
                           return null;
                         },
@@ -142,96 +247,63 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                           price = double.parse(value!);
                         },
                       ),
-
-                      InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'Производитель',
-                          // Добавьте рамку для визуального оформления
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<int>(
-                            menuWidth: 300,
-                            hint: Text(
-                              'Выберите производителя',
+                      GestureDetector(
+                        onTap: () => _showManufacturerMenu(context),
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: 'Производитель',
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            child: Text(
+                              selectedManufacturerId != null
+                                  ? manufacturers!
+                                      .firstWhere(
+                                          (m) => m.id == selectedManufacturerId)
+                                      .name
+                                  : 'Выберите производителя',
                               style: TextStyle(
-                                color: manufacturerId != 0
+                                color: selectedManufacturerId != null
                                     ? Colors.black
                                     : Colors.red,
                                 fontSize: 16,
                               ),
                             ),
-                            value: selectedManufacturerId,
-                            onChanged: (int? newValue) {
-                              setState(() {
-                                selectedManufacturerId = newValue;
-                              });
-                            },
-                            items: manufacturers!.map<DropdownMenuItem<int>>(
-                                (Manufacturer manufacturer) {
-                              return DropdownMenuItem<int>(
-                                value: manufacturer.id,
-                                child: Text(manufacturer.name),
-                              );
-                            }).toList(),
                           ),
                         ),
                       ),
-                      InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'Тип',
-                          // Добавьте рамку для визуального оформления
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<int>(
-                            menuWidth: 300,
-                            hint: Text(
-                              'Выберите тип',
+                      GestureDetector(
+                        onTap: () => _showTypeOfRodMenu(context),
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: 'Тип',
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            child: Text(
+                              selectedTypeOfRodId != null
+                                  ? typesOfRod!
+                                      .firstWhere(
+                                          (t) => t.id == selectedTypeOfRodId)
+                                      .type
+                                  : 'Выберите тип',
                               style: TextStyle(
-                                color: typeId != 0 ? Colors.black : Colors.red,
+                                color: selectedTypeOfRodId != null
+                                    ? Colors.black
+                                    : Colors.red,
                                 fontSize: 16,
                               ),
                             ),
-                            value: selectedTypeOfRodId,
-                            onChanged: (int? newValue) {
-                              setState(() {
-                                selectedTypeOfRodId = newValue;
-                              });
-                            },
-                            items: typesOfRod!.map<DropdownMenuItem<int>>(
-                                (TypeOfRod typeOfRod) {
-                              return DropdownMenuItem<int>(
-                                value: typeOfRod.id,
-                                child: Text(typeOfRod.type),
-                              );
-                            }).toList(),
                           ),
                         ),
                       ),
-                      SizedBox(height: 20),
-                      /*Text(
-                        selectedManufacturerId != null
-                            ? 'Selected Manufacturer ID: $selectedManufacturerId'
-                            : 'No manufacturer selected',
-                        style: TextStyle(fontSize: 16),
-                      ),
-
-                      SizedBox(height: 20),
-                      Text(
-                        selectedManufacturerId != null
-                            ? 'Selected: $selectedManufacturerId'
-                            : 'No option selected',
-                        style: TextStyle(fontSize: 16),
-                      ),*/
-
-                      // Здесь можно добавить выбор типа удилища и производителя
-
-                      // Например, используя DropdownButton или другой виджет
-
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Ссылка'),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '';
+                            return 'Введите ссылку';
                           }
                           return null;
                         },
@@ -243,8 +315,8 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                       ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate() &&
-                              selectedManufacturerId != 0 &&
-                              selectedTypeOfRodId != 0) {
+                              selectedManufacturerId != null &&
+                              selectedTypeOfRodId != null) {
                             manufacturerId = selectedManufacturerId!;
                             typeId = selectedTypeOfRodId!;
                             _formKey.currentState!.save();
@@ -254,15 +326,14 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                               weight: weight,
                               testLoad: testLoad,
                               price: price,
-                              typeId: typeId, // Здесь нужно получить выбранный тип
-                              manufacturerId: manufacturerId, // Здесь нужно получить выбранного производителя
+                              typeId: typeId,
+                              manufacturerId: manufacturerId,
                               link: link,
                             );
 
                             // Здесь можно сохранить новый объект Rod в базе данных или отправить на сервер
                             RodRepository.addRod(request);
                             Navigator.pushNamed(context, '/rods');
-                            // Закрыть страницу после сохранения
                           }
                         },
                         style: ElevatedButton.styleFrom(

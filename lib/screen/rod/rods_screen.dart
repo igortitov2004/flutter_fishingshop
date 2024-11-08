@@ -3,6 +3,7 @@ import 'package:fishingshop/model/rod.dart';
 import 'package:fishingshop/tiles/rod_tile.dart';
 import 'package:fishingshop/service/rod_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RodsScreen extends StatefulWidget {
   const RodsScreen({Key? key}) : super(key: key);
@@ -15,7 +16,7 @@ class _RodsScreenState extends State<RodsScreen> {
   List<Rod>? rods;
   String searchQuery = '';
   bool isAscending = true; // Флаг для сортировки
-
+  String? role;
   getRods() async {
     rods = await RodRepository.getRods();
     setState(() {});
@@ -23,9 +24,23 @@ class _RodsScreenState extends State<RodsScreen> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
+    _getRole();
     getRods();
   }
+
+  Future<void> _getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      role = prefs.getString('role');
+    });
+  }
+
+  /* @override
+  void initState() {
+    super.initState();
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +51,14 @@ class _RodsScreenState extends State<RodsScreen> {
         [];
 
     if (isAscending) {
-      filteredRods.sort((a, b) => a.name.compareTo(b.name));
+      filteredRods.sort((a, b) => a.price.compareTo(b.price));
     } else {
-      filteredRods.sort((a, b) => b.name.compareTo(a.name));
+      filteredRods.sort((a, b) => b.price.compareTo(a.price));
     }
 
     return rods == null
         ? const Scaffold(
-          backgroundColor: Colors.white,
+            backgroundColor: Colors.white,
             body: Center(
               child: CircularProgressIndicator(),
             ),
@@ -51,10 +66,26 @@ class _RodsScreenState extends State<RodsScreen> {
         : Scaffold(
             appBar: AppBar(
               surfaceTintColor: Colors.transparent,
-              title: const Text('solo'),
+              title: const Text('Удилища'),
               centerTitle: true,
               backgroundColor: const Color(0xffffffff),
-             /* automaticallyImplyLeading: false,
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  Navigator.pushNamed(context,
+                      '/main'); // Убедитесь, что маршрут '/login' определен
+                },
+              ),
+              actions: [
+                if (role != 'USER' && role != null)
+                  IconButton(
+                    icon: const Icon(Icons.add, color: Colors.blue),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/addRod');
+                    },
+                  ),
+              ],
+              /* automaticallyImplyLeading: false,
           leading: IconButton(
             
             icon: Icon(Icons.keyboard_arrow_left), // Иконка кнопки
@@ -74,33 +105,7 @@ class _RodsScreenState extends State<RodsScreen> {
                         const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/addRod');
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(Icons.add, color: Colors.blue),
-                              SizedBox(width: 8),
-                              Text(
-                                'Добавить удилище',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                         const SizedBox(width: 10),
                         IconButton(
                           icon: Icon(isAscending
@@ -112,6 +117,13 @@ class _RodsScreenState extends State<RodsScreen> {
                                   !isAscending; // Переключение порядка сортировки
                             });
                           },
+                        ),
+                        Text(
+                          'Сортировка по цене',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                          ),
                         ),
                       ],
                     ),
@@ -136,9 +148,9 @@ class _RodsScreenState extends State<RodsScreen> {
                   Expanded(
                     child: GridView.builder(
                       gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                          SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: 0.5,
+                        childAspectRatio: role==null ? 0.65 : 0.55,
                         crossAxisSpacing: 1,
                         mainAxisSpacing: 1,
                       ),
@@ -146,7 +158,7 @@ class _RodsScreenState extends State<RodsScreen> {
                           .length, // Используем отфильтрованный список
                       itemBuilder: (context, index) {
                         Rod rod = filteredRods[index]; // Получаем объект Rod
-                        return RodTile(rod: rod);
+                        return RodTile(rod: rod,role: role);
                       },
                     ),
                   ),

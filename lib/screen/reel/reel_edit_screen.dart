@@ -30,7 +30,56 @@ class _ReelEditScreenState extends State<ReelEditScreen> {
     setState(() {});
   }
 
-  
+  void _showManufacturerMenu(BuildContext context) async {
+    final RenderBox overlay =
+        Overlay.of(context)!.context.findRenderObject() as RenderBox;
+         final RenderBox button = context.findRenderObject() as RenderBox;
+
+    await showMenu<int>(
+      color: Colors.white,
+      context: context,
+      position: RelativeRect.fromLTRB(
+        button.localToGlobal(Offset.zero).dx,
+        button.localToGlobal(Offset.zero).dy + 270, // Позиция над кнопкой
+        button.localToGlobal(Offset.zero).dx + button.size.width,
+        button.localToGlobal(Offset.zero).dy,
+      ),
+      items: [
+        PopupMenuItem<int>(
+          enabled: false,
+          child: Container(
+            height: 200,
+            width: 300,
+            child: Scrollbar(
+              thumbVisibility: true,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: manufacturers!.map<Widget>((Manufacturer manufacturer) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedManufacturerId = manufacturer.id;
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        height: 40,
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(manufacturer.name, style: TextStyle(color: Colors.black)),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+      elevation: 8.0,
+      
+    );
+  }
 
   @override
   void initState() {
@@ -97,36 +146,23 @@ class _ReelEditScreenState extends State<ReelEditScreen> {
                         },
                       ),
 
-                      InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'Производитель',
-                          // Добавьте рамку для визуального оформления
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<int>(
-                            menuWidth: 300,
-                            hint: Text(
-                              'Выберите производителя',
+                      GestureDetector(
+                        onTap: () => _showManufacturerMenu(context),
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: 'Производитель',
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            child: Text(
+                              selectedManufacturerId != null
+                                  ? manufacturers!.firstWhere((m) => m.id == selectedManufacturerId).name
+                                  : 'Выберите производителя',
                               style: TextStyle(
-                                color: selectedManufacturerId != null
-                                    ? Colors.black
-                                    : Colors.red,
+                                color: selectedManufacturerId != null ? Colors.black : Colors.red,
                                 fontSize: 16,
                               ),
                             ),
-                            value: selectedManufacturerId,
-                            onChanged: (int? newValue) {
-                              setState(() {
-                                selectedManufacturerId = newValue;
-                              });
-                            },
-                            items: manufacturers!.map<DropdownMenuItem<int>>(
-                                (Manufacturer manufacturer) {
-                              return DropdownMenuItem<int>(
-                                value: manufacturer.id,
-                                child: Text(manufacturer.name),
-                              );
-                            }).toList(),
                           ),
                         ),
                       ),

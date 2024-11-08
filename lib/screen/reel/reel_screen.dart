@@ -2,6 +2,7 @@ import 'package:fishingshop/model/reel.dart';
 import 'package:fishingshop/service/reel_repository.dart';
 import 'package:fishingshop/tiles/reel_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReelsScreen extends StatefulWidget {
   const ReelsScreen({Key? key}) : super(key: key);
@@ -14,6 +15,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
   List<Reel>? reels;
   String searchQuery = '';
   bool isAscending = true; // Флаг для сортировки
+  String? role;
 
   getReels() async {
     reels = await ReelRepository.getReels();
@@ -23,7 +25,15 @@ class _ReelsScreenState extends State<ReelsScreen> {
   @override
   void initState() {
     super.initState();
+    _getRole();
     getReels();
+  }
+
+  Future<void> _getRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      role = prefs.getString('role');
+    });
   }
 
   @override
@@ -35,14 +45,14 @@ class _ReelsScreenState extends State<ReelsScreen> {
         [];
 
     if (isAscending) {
-      filteredReels.sort((a, b) => a.name.compareTo(b.name));
+      filteredReels.sort((a, b) => a.price.compareTo(b.price));
     } else {
-      filteredReels.sort((a, b) => b.name.compareTo(a.name));
+      filteredReels.sort((a, b) => b.price.compareTo(a.price));
     }
 
     return reels == null
         ? const Scaffold(
-           backgroundColor: Colors.white,
+            backgroundColor: Colors.white,
             body: Center(
               child: CircularProgressIndicator(),
             ),
@@ -50,9 +60,25 @@ class _ReelsScreenState extends State<ReelsScreen> {
         : Scaffold(
             appBar: AppBar(
               surfaceTintColor: Colors.transparent,
-              title: const Text('solo'),
+              title: const Text('Катушки'),
               centerTitle: true,
               backgroundColor: const Color(0xffffffff),
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  Navigator.pushNamed(context,
+                      '/main'); // Убедитесь, что маршрут '/login' определен
+                },
+              ),
+              actions: [
+                if (role != 'USER' && role != null)
+                  IconButton(
+                    icon: const Icon(Icons.add, color: Colors.blue),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/addReel');
+                    },
+                  ),
+              ],
               /*automaticallyImplyLeading: false,
           leading: IconButton(
             
@@ -73,33 +99,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
                         const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ElevatedButton(
-                          onPressed: () {
-                           Navigator.pushNamed(context, '/addReel');
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(Icons.add, color: Colors.blue),
-                              SizedBox(width: 8),
-                              Text(
-                                'Добавить катушку',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                         const SizedBox(width: 10),
                         IconButton(
                           icon: Icon(isAscending
@@ -111,6 +111,13 @@ class _ReelsScreenState extends State<ReelsScreen> {
                                   !isAscending; // Переключение порядка сортировки
                             });
                           },
+                        ),
+                        Text(
+                          'Сортировка по цене',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                          ),
                         ),
                       ],
                     ),
@@ -135,9 +142,9 @@ class _ReelsScreenState extends State<ReelsScreen> {
                   Expanded(
                     child: GridView.builder(
                       gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                           SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: 0.5,
+                        childAspectRatio: role==null ? 0.7 : 0.6,
                         crossAxisSpacing: 1,
                         mainAxisSpacing: 1,
                       ),
@@ -145,7 +152,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
                           .length, // Используем отфильтрованный список
                       itemBuilder: (context, index) {
                         Reel reel = filteredReels[index]; // Получаем объект Rod
-                        return ReelTile(reel: reel);
+                        return ReelTile(reel: reel,role: role);
                       },
                     ),
                   ),
