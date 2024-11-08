@@ -42,22 +42,22 @@ class _ReelAndRodTypesScreenState extends State<ReelAndRodTypesScreen>
   }
 
   Future<void> _addTypeOfReel(String name) async {
-    //await TypeOfReelRepository.addTypeOfReel(name, context);
+    await TypeOfReelRepository.addTypeOfReel(name, context);
     getTypesOfReel();
   }
 
   Future<void> _addTypeOfRod(String name) async {
-    // await TypeOfRodRepository.addTypeOfRod(name, context);
+    await TypeOfRodRepository.addTypeOfRod(name, context);
     getTypesOfRod();
   }
 
   Future<void> _editTypeOfReel(int id, String name) async {
-    // await TypeOfReelRepository.editTypeOfReel(id, name, context);
+    await TypeOfReelRepository.editTypeOfReel(id, name, context);
     getTypesOfReel();
   }
 
   Future<void> _editTypeOfRod(int id, String name) async {
-    // await TypeOfRodRepository.editTypeOfRod(id, name, context);
+    await TypeOfRodRepository.editTypeOfRod(id, name, context);
     getTypesOfRod();
   }
 
@@ -70,11 +70,13 @@ class _ReelAndRodTypesScreenState extends State<ReelAndRodTypesScreen>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+      
       length: 2,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: const Text('Типы товаров'),
+          backgroundColor: Colors.white,
           actions: [
             IconButton(
                 icon: const Icon(Icons.add, color: Colors.blue),
@@ -90,7 +92,10 @@ class _ReelAndRodTypesScreenState extends State<ReelAndRodTypesScreen>
             ],
           ),
         ),
-        body: TabBarView(
+        
+        body: Container(
+          color: Color(0x1200CCFF),
+          child :TabBarView(
           controller: _tabController,
           children: [
             _buildRodTypesList(),
@@ -98,7 +103,7 @@ class _ReelAndRodTypesScreenState extends State<ReelAndRodTypesScreen>
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildRodTypesList() {
