@@ -1,5 +1,6 @@
+import 'package:fishingshop/model/manufacturer.dart';
 import 'package:fishingshop/model/rod.dart';
-
+import 'package:fishingshop/service/manufacturer_repository.dart';
 import 'package:fishingshop/tiles/rod_tile.dart';
 import 'package:fishingshop/service/rod_repository.dart';
 import 'package:flutter/material.dart';
@@ -14,24 +15,29 @@ class RodsScreen extends StatefulWidget {
 
 class _RodsScreenState extends State<RodsScreen> {
   List<Rod>? rods;
+  List<Manufacturer>? manufacturers;
   String searchQuery = '';
   bool isAscending = true; // Флаг для сортировки
   String? role;
-  getRods() async {
-     rods = await RodRepository.getRods(); 
-     setState(() {
-       
-     });
-  }
-
-  
+  List<String> selectedManufacturers = []; // Для хранения выбранных производителей
+  final ScrollController _scrollController = ScrollController(); // Создаем контроллер
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getRole();
     getRods();
+    getManufacturers();
+  }
+
+  Future<void> getRods() async {
+    rods = await RodRepository.getRods(); 
+    setState(() {});
+  }
+
+  Future<void> getManufacturers() async {
+    manufacturers = await ManufacturerRepository.getManufacturers(); 
+    setState(() {});
   }
 
   Future<void> _getRole() async {
@@ -41,27 +47,49 @@ class _RodsScreenState extends State<RodsScreen> {
     });
   }
 
-  /* @override
-  void initState() {
-    super.initState();
-  }*/
+  void _sortRods(String criterion) {
+    if (rods != null) {
+      setState(() {
+        if (criterion == 'price') {
+          rods!.sort((a, b) => isAscending ? a.price.compareTo(b.price) : b.price.compareTo(a.price));
+        } else if (criterion == 'name') {
+          rods!.sort((a, b) => isAscending ? a.name.compareTo(b.name) : b.name.compareTo(a.name));
+        }
+      });
+    }
+  }
+
+  void _toggleManufacturer(String manufacturer) {
+    setState(() {
+      if (selectedManufacturers.contains(manufacturer)) {
+        selectedManufacturers.remove(manufacturer);
+      } else {
+        selectedManufacturers.add(manufacturer);
+      }
+    });
+  }
+
+  void _clearSelectedManufacturers() {
+    setState(() {
+      selectedManufacturers.clear(); // Очищаем список выбранных производителей
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose(); // Освобождаем контроллер
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Фильтрация и сортировка списка
-    List<Rod> filteredRods = rods?.where((rod) {
-          return rod.name.toLowerCase().startsWith(searchQuery.toLowerCase());
-        }).toList() ??
-        [];
+    // Фильтрация списка
+    List<Rod> filteredRods = (rods ?? []).where((rod) {
+      return rod.name.toLowerCase().startsWith(searchQuery.toLowerCase()) &&
+          (selectedManufacturers.isEmpty || selectedManufacturers.contains(rod.manufacturer.name));
+    }).toList();
 
-    if (isAscending) {
-      filteredRods.sort((a, b) => a.price.compareTo(b.price));
-    } else {
-      filteredRods.sort((a, b) => b.price.compareTo(a.price));
-    }
-    
-
-    return rods == null
+    return (rods == null || manufacturers == null)
         ? const Scaffold(
             backgroundColor: Colors.white,
             body: Center(
@@ -77,8 +105,7 @@ class _RodsScreenState extends State<RodsScreen> {
               leading: IconButton(
                 icon: Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: () {
-                  Navigator.pushNamed(context,
-                      '/main'); // Убедитесь, что маршрут '/login' определен
+                  Navigator.pushNamed(context, '/main');
                 },
               ),
               actions: [
@@ -87,18 +114,31 @@ class _RodsScreenState extends State<RodsScreen> {
                     icon: const Icon(Icons.add, color: Colors.blue),
                     onPressed: () {
                       Navigator.pushNamed(context, '/addRod');
-                    }
+                    },
                   ),
+                PopupMenuButton<String>(
+                  color: Colors.white,
+                  icon: Icon(Icons.more_vert, color: Colors.black),
+                  onSelected: (value) {
+                    _sortRods(value);
+                  },
+                  offset: Offset(0, 40),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    side: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  itemBuilder: (context) => [
+                    const PopupMenuItem<String>(
+                      value: 'price',
+                      child: Text('Сортировать по цене'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'name',
+                      child: Text('Сортировать по названию'),
+                    ),
+                  ],
+                ),
               ],
-              /* automaticallyImplyLeading: false,
-          leading: IconButton(
-            
-            icon: Icon(Icons.keyboard_arrow_left), // Иконка кнопки
-            onPressed: () {
-              Navigator.pushNamed(context,'/');
-              print('Кнопка нажата');
-            },
-          ),*/
             ),
             body: Container(
               color: Color(0x1200CCFF),
@@ -106,62 +146,42 @@ class _RodsScreenState extends State<RodsScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const SizedBox(width: 10),
-                        IconButton(
-                          icon: Icon(isAscending
-                              ? Icons.arrow_upward
-                              : Icons.arrow_downward),
-                          onPressed: () {
-                            setState(() {
-                              isAscending =
-                                  !isAscending; // Переключение порядка сортировки
-                            });
-                          },
-                        ),
-                        Text(
-                          'Сортировка по цене',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                searchQuery = value; // Обновляем поисковый запрос
+                              });
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Поиск по названию',
+                            ),
                           ),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          icon: Icon(Icons.filter_list, color: Colors.black),
+                          onPressed: () => _showManufacturerMenu(context),
                         ),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                    child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          searchQuery = value; // Обновляем поисковый запрос
-                        });
-                      },
-                      decoration: InputDecoration(
-                        filled: true, // Указываем, что фон будет залит
-                        fillColor: Colors.white, // Цвет фона
-                        hintText: 'Поиск по названию',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
                   Expanded(
                     child: GridView.builder(
+                      controller: _scrollController, // Передаем контроллер
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: role == null ? 0.65 : 0.55,
                         crossAxisSpacing: 1,
                         mainAxisSpacing: 1,
                       ),
-                      itemCount: filteredRods
-                          .length, // Используем отфильтрованный список
+                      itemCount: filteredRods.length,
                       itemBuilder: (context, index) {
-                        Rod rod = filteredRods[index]; // Получаем объект Rod
+                        Rod rod = filteredRods[index];
                         return RodTile(rod: rod, role: role);
                       },
                     ),
@@ -170,5 +190,58 @@ class _RodsScreenState extends State<RodsScreen> {
               ),
             ),
           );
+  }
+
+  void _showManufacturerMenu(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: Text('Выберите производителей',
+          style: const TextStyle(fontSize: 20),),
+          content: SizedBox(
+            height: 300,
+            width: 300,
+            child: Scrollbar(
+              thumbVisibility: true,
+              controller: _scrollController,
+              child: ListView(
+                children: manufacturers!.map<Widget>((Manufacturer manufacturer) {
+                  return StatefulBuilder(
+                    builder: (context, innerSetState) {
+                      return CheckboxListTile(
+                        title: Text(manufacturer.name),
+                        value: selectedManufacturers.contains(manufacturer.name),
+                        onChanged: (bool? value) {
+                          _toggleManufacturer(manufacturer.name);
+                          innerSetState(() {}); // Обновляем состояние внутри StatefulBuilder
+                        },
+                      );
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _clearSelectedManufacturers(); // Очищаем выбранные производители
+                Navigator.of(context).pop(); // Закрываем диалог после очистки
+                _showManufacturerMenu(context); // Открываем диалог снова для обновления состояния
+              },
+              child: Text('ОЧИСТИТЬ'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Закрываем диалог
+              },
+              child: Text('ЗАКРЫТЬ'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -38,7 +38,7 @@ class ReelTile extends StatelessWidget {
               Text(
                 '${reel.price} BYN',
                 style: const TextStyle(
-                  color: Colors.black,
+                  color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),

@@ -1,4 +1,6 @@
 import 'package:fishingshop/model/reel.dart';
+import 'package:fishingshop/screen/cart/cart_screen.dart';
+import 'package:fishingshop/screen/reel/reel_screen.dart';
 import 'package:fishingshop/service/cart_repository.dart';
 import 'package:fishingshop/service/reel_repository.dart';
 import 'package:flutter/material.dart';
@@ -98,6 +100,14 @@ class _ReelDetailsState extends State<ReelDetails> {
                     fontSize: 16,
                   ),
                 ),
+                Text(
+                  '${reel!.price} BYN', // Интерполяция строки
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20, // Увеличенный размер шрифта
+                  ),
+                ),
                 const SizedBox(height: 10), // От
                 if (role != 'USER' && role != null)
                   Card(
@@ -123,9 +133,15 @@ class _ReelDetailsState extends State<ReelDetails> {
                                   children: [
                                     ElevatedButton(
                                       onPressed: () {
-                                        ReelRepository.deleteReel(reel!.id);
-                                        Navigator.pushNamed(context, '/reels');
-                                  
+                                        ReelRepository.deleteReel(
+                                            reel!.id, context);
+                                        Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new ReelsScreen()),
+                                          (Route<dynamic> route) => false,
+                                        );
                                       },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.red,
@@ -195,65 +211,6 @@ class _ReelDetailsState extends State<ReelDetails> {
                       ),
                     ),
                   ),
-                if (role == 'USER' && role != null)
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    color: Colors.white,
-                    child: Container(
-                      height: 90,
-                      width: double.infinity,
-                      // Указание высоты контейнера
-                      padding:
-                          const EdgeInsets.all(5), // Отступы внутри карточки
-                      child: Column(
-                        // Распределение элементов
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment
-                                .start, // Выравнивание текста слева
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10), // Отступ слева
-                                child: Text(
-                                  '${reel!.price} BYN', // Интерполяция строки
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20, // Увеличенный размер шрифта
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 2), // От
-                          Container(
-                            width: 320, // Установите нужную ширину
-                            child: ElevatedButton(
-                              onPressed: () {
-                                CartRepository.addReelCart(reel!.id, context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                              child: const Text(
-                                'Купить',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
               ],
             ),
           ),

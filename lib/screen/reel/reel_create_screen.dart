@@ -1,6 +1,7 @@
 import 'package:fishingshop/DTOs/reel_create_request.dart';
 import 'package:fishingshop/model/manufacturer.dart';
 import 'package:fishingshop/model/typeOfReel.dart';
+import 'package:fishingshop/screen/reel/reel_screen.dart';
 import 'package:fishingshop/service/manufacturer_repository.dart';
 import 'package:fishingshop/service/reel_repository.dart';
 import 'package:fishingshop/service/type_of_reel_repository.dart';
@@ -42,7 +43,8 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
   late String link;
 
   void _showManufacturerMenu(BuildContext context) async {
-    final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Overlay.of(context)!.context.findRenderObject() as RenderBox;
     final RenderBox button = context.findRenderObject() as RenderBox;
 
     await showMenu<int>(
@@ -64,7 +66,8 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
               thumbVisibility: true,
               child: SingleChildScrollView(
                 child: Column(
-                  children: manufacturers!.map<Widget>((Manufacturer manufacturer) {
+                  children:
+                      manufacturers!.map<Widget>((Manufacturer manufacturer) {
                     return GestureDetector(
                       onTap: () {
                         setState(() {
@@ -76,7 +79,8 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
                         height: 40,
                         alignment: Alignment.centerLeft,
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(manufacturer.name, style: TextStyle(color: Colors.black)),
+                        child: Text(manufacturer.name,
+                            style: TextStyle(color: Colors.black)),
                       ),
                     );
                   }).toList(),
@@ -91,7 +95,8 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
   }
 
   void _showTypeOfReelMenu(BuildContext context) async {
-    final RenderBox overlay = Overlay.of(context)!.context.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Overlay.of(context)!.context.findRenderObject() as RenderBox;
     final RenderBox button = context.findRenderObject() as RenderBox;
 
     await showMenu<int>(
@@ -125,7 +130,8 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
                         height: 40,
                         alignment: Alignment.centerLeft,
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(typeOfReel.type, style: TextStyle(color: Colors.black)),
+                        child: Text(typeOfReel.type,
+                            style: TextStyle(color: Colors.black)),
                       ),
                     );
                   }).toList(),
@@ -151,6 +157,7 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
         : Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
+              centerTitle: true,
               title: Text('Добавление катушки'),
               backgroundColor: Colors.white,
               leading: IconButton(
@@ -200,13 +207,19 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
                             labelText: 'Производитель',
                           ),
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
                             child: Text(
                               selectedManufacturerId != null
-                                  ? manufacturers!.firstWhere((m) => m.id == selectedManufacturerId).name
+                                  ? manufacturers!
+                                      .firstWhere(
+                                          (m) => m.id == selectedManufacturerId)
+                                      .name
                                   : 'Выберите производителя',
                               style: TextStyle(
-                                color: selectedManufacturerId != null ? Colors.black : Colors.red,
+                                color: selectedManufacturerId != null
+                                    ? Colors.black
+                                    : Colors.red,
                                 fontSize: 16,
                               ),
                             ),
@@ -220,13 +233,19 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
                             labelText: 'Тип',
                           ),
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
                             child: Text(
                               selectedTypeOfReelId != null
-                                  ? typesOfReel!.firstWhere((t) => t.id == selectedTypeOfReelId).type
+                                  ? typesOfReel!
+                                      .firstWhere(
+                                          (t) => t.id == selectedTypeOfReelId)
+                                      .type
                                   : 'Выберите тип',
                               style: TextStyle(
-                                color: selectedTypeOfReelId != null ? Colors.black : Colors.red,
+                                color: selectedTypeOfReelId != null
+                                    ? Colors.black
+                                    : Colors.red,
                                 fontSize: 16,
                               ),
                             ),
@@ -261,8 +280,15 @@ class _ReelCreateScreenState extends State<ReelCreateScreen> {
                             );
 
                             // Здесь можно сохранить новый объект Reel в базе данных или отправить на сервер
-                            ReelRepository.addReel(request);
-                            Navigator.pushNamed(context, '/reels');
+                            ReelRepository.addReel(request, context);
+
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ReelsScreen()),
+                                  (Route<dynamic> route)=>false,
+                            );
+                    
                           }
                         },
                         style: ElevatedButton.styleFrom(

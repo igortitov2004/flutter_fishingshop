@@ -1,4 +1,5 @@
 import 'package:fishingshop/model/rod.dart';
+import 'package:fishingshop/screen/rod/rods_screen.dart';
 import 'package:fishingshop/service/cart_repository.dart';
 import 'package:fishingshop/service/rod_repository.dart';
 import 'package:flutter/material.dart';
@@ -40,10 +41,19 @@ class _RodDetailsState extends State<RodDetails> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        surfaceTintColor: Colors.transparent,
-        title: Text(rod!.name),
-        backgroundColor: Colors.white,
-      ),
+          surfaceTintColor: Colors.transparent,
+          title: Text(rod!.name),
+          backgroundColor: Colors.white,
+          /*leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => new RodsScreen()),
+                  (Route<dynamic> route) => false,
+                );
+              })*/
+              ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -101,6 +111,15 @@ class _RodDetailsState extends State<RodDetails> {
                 ),
               ),
               const SizedBox(height: 10),
+              Text(
+                '${rod!.price} BYN',
+                style: const TextStyle(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(height: 10),
               if (role != 'USER' && role != null)
                 Card(
                   shape: RoundedRectangleBorder(
@@ -122,9 +141,15 @@ class _RodDetailsState extends State<RodDetails> {
                               ...[
                                 ElevatedButton(
                                   onPressed: () {
-                                    RodRepository.deleteRod(rod!.id);
+                                    RodRepository.deleteRod(rod!.id, context);
                                     //Navigator.pop(context, true);
-                                    Navigator.pushNamed(context, '/rods');
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              new RodsScreen()),
+                                      (Route<dynamic> route) => false,
+                                    );
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.red,
@@ -151,8 +176,7 @@ class _RodDetailsState extends State<RodDetails> {
                                 ElevatedButton(
                                   onPressed: () {
                                     Navigator.pushNamed(context, '/editRod',
-                                            arguments: rod);
-                                
+                                        arguments: rod);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.amber,
@@ -183,60 +207,6 @@ class _RodDetailsState extends State<RodDetails> {
                     ),
                   ),
                 ),
-              if (role == 'USER' && role != null)
-                Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  color: Colors.white,
-                  child: Container(
-                    height: 90,
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(5),
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text(
-                                '${rod!.price} BYN',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
-                        Container(
-                          width: 320,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              CartRepository.addRodCart(rod!.id, context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                            child: const Text(
-                              'Купить',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                )
             ],
           ),
         ),

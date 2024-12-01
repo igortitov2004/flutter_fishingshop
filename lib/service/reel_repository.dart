@@ -4,6 +4,7 @@ import 'package:fishingshop/DTOs/reel_create_request.dart';
 import 'package:fishingshop/DTOs/reel_edit_request.dart';
 import 'package:fishingshop/model/reel.dart';
 import 'package:fishingshop/service/globals.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ReelRepository {
@@ -25,7 +26,7 @@ class ReelRepository {
     }
     return reels;
   }
-  static Future<void> addReel(ReelCreateRequest request) async {
+  static Future<void> addReel(ReelCreateRequest request,BuildContext context) async {
     var url = Uri.parse(baseURL + '/reels/');
     http.Response response = await http.post(
       url,
@@ -34,17 +35,17 @@ class ReelRepository {
     );
      print(response.body);
     
-   /*if (response.statusCode == 201) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Post created successfully!"),
+   if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Катушка добавлена!"),
       ));
     } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Failed to create post!"),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Не удалось добавить катушку!"),
       ));
-    }*/
+    }
   }
-  static Future<void> editRod(ReelEditRequest request) async {
+  static Future<void> editReel(ReelEditRequest request,BuildContext context) async {
     var url = Uri.parse(baseURL + '/reels/edit');
     http.Response response = await http.put(
       url,
@@ -53,18 +54,18 @@ class ReelRepository {
     );
      print(response.body);
     
-   /*if (response.statusCode == 201) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Post created successfully!"),
+   if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Катушка изменена!"),
       ));
     } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Failed to create post!"),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Не удалось изменить катушку!"),
       ));
-    }*/
+    }
   }
 
-  static Future<void> deleteReel(int reelId) async {
+  static Future<void> deleteReel(int reelId,BuildContext context) async {
     var url = Uri.parse(baseURL + '/reels/'+reelId.toString());
     http.Response response = await http.delete(
       url,
@@ -72,14 +73,14 @@ class ReelRepository {
     );
      print(response.body);
     
-   /*if (response.statusCode == 201) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Post created successfully!"),
+   if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Катушка удалена!"),
       ));
     } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Failed to create post!"),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Не удалось удалить катушку!"),
       ));
-    }*/
+    }
   }
 }

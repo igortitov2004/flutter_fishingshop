@@ -1,5 +1,7 @@
 import 'package:fishingshop/model/reel.dart';
+import 'package:fishingshop/model/manufacturer.dart';
 import 'package:fishingshop/service/reel_repository.dart';
+import 'package:fishingshop/service/manufacturer_repository.dart';
 import 'package:fishingshop/tiles/reel_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,22 +15,28 @@ class ReelsScreen extends StatefulWidget {
 
 class _ReelsScreenState extends State<ReelsScreen> {
   List<Reel>? reels;
+  List<Manufacturer>? manufacturers;
   String searchQuery = '';
   bool isAscending = true; // Флаг для сортировки
   String? role;
-
-  getReels() async {
-    reels = await ReelRepository.getReels();
-    setState(() {});
-  }
-
-
+  List<String> selectedManufacturers = []; // Для хранения выбранных производителей
 
   @override
   void initState() {
     super.initState();
     _getRole();
     getReels();
+    getManufacturers();
+  }
+
+  Future<void> getReels() async {
+    reels = await ReelRepository.getReels();
+    setState(() {});
+  }
+
+  Future<void> getManufacturers() async {
+    manufacturers = await ManufacturerRepository.getManufacturers();
+    setState(() {});
   }
 
   Future<void> _getRole() async {
@@ -38,21 +46,43 @@ class _ReelsScreenState extends State<ReelsScreen> {
     });
   }
 
+  void _toggleManufacturer(String manufacturer) {
+    setState(() {
+      if (selectedManufacturers.contains(manufacturer)) {
+        selectedManufacturers.remove(manufacturer);
+      } else {
+        selectedManufacturers.add(manufacturer);
+      }
+    });
+  }
+
+  void _clearSelectedManufacturers() {
+    setState(() {
+      selectedManufacturers.clear(); // Очищаем список выбранных производителей
+    });
+  }
+
+  void _sortReels(String criterion) {
+    setState(() {
+      if (criterion == 'price') {
+        isAscending = true; // Сортировка по возрастанию
+        reels?.sort((a, b) => a.price.compareTo(b.price));
+      } else if (criterion == 'name') {
+        isAscending = true; // Сортировка по возрастанию
+        reels?.sort((a, b) => a.name.compareTo(b.name));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Фильтрация и сортировка списка
-    List<Reel> filteredReels = reels?.where((reel) {
-          return reel.name.toLowerCase().startsWith(searchQuery.toLowerCase());
-        }).toList() ??
-        [];
+    // Фильтрация списка
+    List<Reel> filteredReels = (reels ?? []).where((reel) {
+      return reel.name.toLowerCase().startsWith(searchQuery.toLowerCase()) &&
+          (selectedManufacturers.isEmpty || selectedManufacturers.contains(reel.manufacturer.name));
+    }).toList();
 
-    if (isAscending) {
-      filteredReels.sort((a, b) => a.price.compareTo(b.price));
-    } else {
-      filteredReels.sort((a, b) => b.price.compareTo(a.price));
-    }
-
-    return reels == null
+    return reels == null || manufacturers == null
         ? const Scaffold(
             backgroundColor: Colors.white,
             body: Center(
@@ -68,8 +98,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
               leading: IconButton(
                 icon: Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: () {
-                  Navigator.pushNamed(context,
-                      '/main'); // Убедитесь, что маршрут '/login' определен
+                  Navigator.pushNamed(context, '/main');
                 },
               ),
               actions: [
@@ -80,16 +109,25 @@ class _ReelsScreenState extends State<ReelsScreen> {
                       Navigator.pushNamed(context, '/addReel');
                     },
                   ),
+                PopupMenuButton<String>(
+                  color: Colors.white,
+                  icon: Icon(Icons.more_vert, color: Colors.black),
+                  onSelected: _sortReels,
+                  offset: Offset(0, 40),
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      const PopupMenuItem<String>(
+                        value: 'price',
+                        child: Text('Сортировать по цене'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'name',
+                        child: Text('Сортировать по названию'),
+                      ),
+                    ];
+                  },
+                ),
               ],
-              /*automaticallyImplyLeading: false,
-          leading: IconButton(
-            
-            icon: Icon(Icons.keyboard_arrow_left), // Иконка кнопки
-            onPressed: () {
-              Navigator.pushNamed(context,'/');
-              print('Кнопка нажата');
-            },
-          ),*/
             ),
             body: Container(
               color: Color(0x1200CCFF),
@@ -97,62 +135,43 @@ class _ReelsScreenState extends State<ReelsScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const SizedBox(width: 10),
-                        IconButton(
-                          icon: Icon(isAscending
-                              ? Icons.arrow_upward
-                              : Icons.arrow_downward),
-                          onPressed: () {
-                            setState(() {
-                              isAscending =
-                                  !isAscending; // Переключение порядка сортировки
-                            });
-                          },
-                        ),
-                        Text(
-                          'Сортировка по цене',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
+                        const SizedBox(width: 4),
+                        Expanded(
+                          
+                          child: TextField(
+                            onChanged: (value) {
+                              setState(() {
+                                searchQuery = value; // Обновляем поисковый запрос
+                              });
+                            },
+                            decoration: InputDecoration(
+                              
+                              hintText: 'Поиск по названию',
+                              
+                            ),
                           ),
                         ),
+                        IconButton(
+                          icon: Icon(Icons.filter_list, color: Colors.black),
+                          onPressed: () => _showManufacturerMenu(context),
+                        ),
                       ],
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                    child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          searchQuery = value; // Обновляем поисковый запрос
-                        });
-                      },
-                      decoration: InputDecoration(
-                        filled: true, // Указываем, что фон будет залит
-                        fillColor: Colors.white, // Цвет фона
-                        hintText: 'Поиск по названию',
-                        border: OutlineInputBorder(),
-                      ),
                     ),
                   ),
                   Expanded(
                     child: GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: role == null ? 0.7 : 0.6,
+                        childAspectRatio: role == null ? 0.65 : 0.58,
                         crossAxisSpacing: 1,
                         mainAxisSpacing: 1,
                       ),
-                      itemCount: filteredReels
-                          .length, // Используем отфильтрованный список
+                      itemCount: filteredReels.length,
                       itemBuilder: (context, index) {
-                        Reel reel = filteredReels[index]; // Получаем объект Rod
+                        Reel reel = filteredReels[index];
                         return ReelTile(reel: reel, role: role);
                       },
                     ),
@@ -161,5 +180,56 @@ class _ReelsScreenState extends State<ReelsScreen> {
               ),
             ),
           );
+  }
+
+  void _showManufacturerMenu(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: Text('Выберите производителей', style: const TextStyle(fontSize: 20)),
+          content: SizedBox(
+            height: 300,
+            width: 300,
+            child: Scrollbar(
+              thumbVisibility: true,
+              child: ListView(
+                children: manufacturers!.map<Widget>((Manufacturer manufacturer) {
+                  return StatefulBuilder(
+                    builder: (context, innerSetState) {
+                      return CheckboxListTile(
+                        title: Text(manufacturer.name),
+                        value: selectedManufacturers.contains(manufacturer.name),
+                        onChanged: (bool? value) {
+                          _toggleManufacturer(manufacturer.name);
+                          innerSetState(() {}); // Обновляем состояние внутри StatefulBuilder
+                        },
+                      );
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _clearSelectedManufacturers(); // Очищаем выбранные производители
+                Navigator.of(context).pop(); // Закрываем диалог после очистки
+                _showManufacturerMenu(context); // Открываем диалог снова для обновления состояния
+              },
+              child: Text('ОЧИСТИТЬ'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Закрываем диалог
+              },
+              child: Text('ЗАКРЫТЬ'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

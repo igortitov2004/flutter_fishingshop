@@ -39,7 +39,7 @@ class RodTile extends StatelessWidget {
               Text(
                 '${rod.price} BYN',
                 style: const TextStyle(
-                  color: Colors.black,
+                  color: Colors.green,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),

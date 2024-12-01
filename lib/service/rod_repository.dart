@@ -6,6 +6,7 @@ import 'package:fishingshop/model/manufacturer.dart';
 import 'package:fishingshop/model/rod.dart';
 import 'package:fishingshop/model/typeOfRod.dart';
 import 'package:fishingshop/service/globals.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class RodRepository {
@@ -57,7 +58,7 @@ class RodRepository {
     }
     return rods;
   }
-  static Future<void> addRod(RodCreateRequest request) async {
+  static Future<void> addRod(RodCreateRequest request,BuildContext context) async {
     var url = Uri.parse(baseURL + '/rods/');
     http.Response response = await http.post(
       url,
@@ -66,17 +67,17 @@ class RodRepository {
     );
      print(response.body);
     
-   /*if (response.statusCode == 201) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Post created successfully!"),
+   if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Удилище добавлено!"),
       ));
     } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Failed to create post!"),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Не удалось добавить удилище!"),
       ));
-    }*/
+    }
   }
-  static Future<void> editRod(RodEditRequest request) async {
+  static Future<void> editRod(RodEditRequest request,BuildContext context) async {
     var url = Uri.parse(baseURL + '/rods/edit');
     http.Response response = await http.put(
       url,
@@ -85,18 +86,18 @@ class RodRepository {
     );
      print(response.body);
     
-   /*if (response.statusCode == 201) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Post created successfully!"),
+   if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Удилище изменено!"),
       ));
     } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Failed to create post!"),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Не удалось изменить удилище!"),
       ));
-    }*/
+    }
   }
 
-  static Future<void> deleteRod(int rodId) async {
+  static Future<void> deleteRod(int rodId,BuildContext context) async {
     var url = Uri.parse(baseURL + '/rods/'+rodId.toString());
     http.Response response = await http.delete(
       url,
@@ -104,14 +105,14 @@ class RodRepository {
     );
      print(response.body);
     
-   /*if (response.statusCode == 201) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Post created successfully!"),
+   if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Удилище удалено!"),
       ));
     } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Failed to create post!"),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Не удалось удалить удилище!"),
       ));
-    }*/
+    }
   }
 }

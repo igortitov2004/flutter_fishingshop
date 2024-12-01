@@ -150,6 +150,79 @@ static Future<void> deleteFromReelCart(int reelId, BuildContext context) async {
   }
 
 
+  static Future<void> increaseReelAmount(int reelId, BuildContext context) async {
+  var url = Uri.parse(baseURL + '/reelsCarts/edit');
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var token = prefs.getString('token');
+
+  final headers = <String, String>{
+    "Content-Type": "application/json; charset=utf-8",
+    "Authorization": "Bearer $token",
+  };
+
+  http.Response response = await http.put(
+    url,
+    headers: headers,
+    body: jsonEncode({"id": reelId}),
+  );
+  print(response.body);
+}
+
+static Future<void> decreaseReelAmount(int reelId, BuildContext context) async {
+  var url = Uri.parse(baseURL + '/reelsCarts/edit/dec');
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var token = prefs.getString('token');
+
+  final headers = <String, String>{
+    "Content-Type": "application/json; charset=utf-8",
+    "Authorization": "Bearer $token",
+  };
+
+  http.Response response = await http.put(
+    url,
+    headers: headers,
+    body: jsonEncode({"id": reelId}),
+  );
+  print(response.body);
+}
+
+  static Future<void> increaseRodAmount(int rodId, BuildContext context) async {
+  var url = Uri.parse(baseURL + '/rodsCarts/edit');
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var token = prefs.getString('token');
+
+  final headers = <String, String>{
+    "Content-Type": "application/json; charset=utf-8",
+    "Authorization": "Bearer $token",
+  };
+
+  http.Response response = await http.put(
+    url,
+    headers: headers,
+    body: jsonEncode({"id": rodId}),
+  );
+  print(response.body);
+}
+
+static Future<void> decreaseRodAmount(int rodId, BuildContext context) async {
+  var url = Uri.parse(baseURL + '/rodsCarts/edit/dec');
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var token = prefs.getString('token');
+
+  final headers = <String, String>{
+    "Content-Type": "application/json; charset=utf-8",
+    "Authorization": "Bearer $token",
+  };
+
+  http.Response response = await http.put(
+    url,
+    headers: headers,
+    body: jsonEncode({"id": rodId}),
+  );
+  print(response.body);
+}
+
+
 
 
   /*

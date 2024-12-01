@@ -1,4 +1,12 @@
+import 'package:fishingshop/screen/manufacturers/manufacturers_screen.dart';
+import 'package:fishingshop/screen/order/order_screen.dart';
+import 'package:fishingshop/screen/reel/reel_screen.dart';
+import 'package:fishingshop/screen/register_screen.dart';
+import 'package:fishingshop/screen/rod/rods_screen.dart';
+import 'package:fishingshop/screen/sign_in_screen.dart';
+import 'package:fishingshop/screen/slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainScreen extends StatefulWidget {
@@ -32,21 +40,37 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+     
       appBar: AppBar(
-        surfaceTintColor: Colors.transparent,
+       
         centerTitle: true,
-        title: const Text('CATFISH'),
+        title: Row(
+          children: [
+            Image.asset(
+              "lib/images/fishLogin.jpg",
+              width: 50, 
+              height: 50,
+            ),
+            const SizedBox(width: 8), 
+            const Text(
+              'CATFISH',
+              style: TextStyle(fontSize: 20),
+            ),
+          ],
+        ),
         backgroundColor: const Color(0xffffffff),
         automaticallyImplyLeading: false,
+
         actions: [
           PopupMenuButton(
+            offset: const Offset(0, 40),
             icon: const Icon(Icons.account_circle),
             color: const Color(0xffffffff),
             itemBuilder: (context) => [
               if (role != null)
                 PopupMenuItem(
                   child: Text(
-                    'Логин: ${username}',
+                    'Логин: $username',
                     style: const TextStyle(color: Colors.green),
                   ),
                 ),
@@ -55,8 +79,11 @@ class _MainScreenState extends State<MainScreen> {
                   child: ListTile(
                     title: const Text('Заказы'),
                     onTap: () {
-                      Navigator.pushNamed(context, '/orders');
-                      // Не закрываем меню
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const OrderScreen()),
+                      );
                     },
                   ),
                 ),
@@ -66,7 +93,6 @@ class _MainScreenState extends State<MainScreen> {
                     title: const Text('Изменение пароля'),
                     onTap: () {
                       Navigator.pushNamed(context, '/changePass');
-                      // Не закрываем меню
                     },
                   ),
                 ),
@@ -78,7 +104,11 @@ class _MainScreenState extends State<MainScreen> {
                       prefs.remove('token');
                       prefs.remove('role');
                       prefs.remove('username');
-                      Navigator.pushNamed(context, '/main');
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MainScreen()),
+                      );
                     },
                   ),
                 ),
@@ -86,21 +116,27 @@ class _MainScreenState extends State<MainScreen> {
                 PopupMenuItem(
                   child: ListTile(
                     title: Text('Авторизация',
-                    style: const TextStyle(color: Colors.blue)),
+                        style: const TextStyle(color: Colors.blue)),
                     onTap: () {
-                      //_logout();
-                      Navigator.pushNamed(context, '/auth');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignInPage()),
+                      );
                     },
                   ),
                 ),
-                 if (role == null)
+              if (role == null)
                 PopupMenuItem(
                   child: ListTile(
                     title: Text('Регистрация',
-                    style: const TextStyle(color: Colors.blue)),
+                        style: const TextStyle(color: Colors.blue)),
                     onTap: () {
-                      //_logout();
-                      Navigator.pushNamed(context, '/register');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterPage()),
+                      );
                     },
                   ),
                 ),
@@ -108,120 +144,25 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
+      
+     // backgroundColor: Color.fromARGB(255, 0, 204, 255),
       body: Container(
-        constraints: const BoxConstraints.expand(),
+        height: double.infinity,
         color: const Color(0x1200CCFF),
-        child: Padding(
-          padding: const EdgeInsets.all(30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/rods');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.list, color: Colors.blue),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Удилища',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/reels');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.list, color: Colors.blue),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Катушки',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-               if (role =='ADMIN')
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/manufacturers');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.list, color: Colors.blue),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Производители',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-                 if (role =='ADMIN')
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/types');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.list, color: Colors.blue),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'Типы катушек и удилищ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (role == 'USER')
+        child: SingleChildScrollView(
+         // color: const Color(0x1200CCFF),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                SimpleSlider(), // Убираем Expanded, чтобы кнопки шли сразу под слайдером
+                const SizedBox(height: 20), // Отступ между слайдером и кнопками
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/carts');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RodsScreen()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -232,10 +173,15 @@ class _MainScreenState extends State<MainScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Icon(Icons.shopping_cart, color: Colors.blue),
-                      const SizedBox(width: 8),
+                      SvgPicture.asset(
+                        "lib/images/rodSVG.svg",
+                        width: 24,
+                        height: 24,
+                        color: Colors.blue,
+                      ),
+                      const SizedBox(width: 10),
                       const Text(
-                        'Корзина',
+                        'Удилища',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 14,
@@ -244,7 +190,124 @@ class _MainScreenState extends State<MainScreen> {
                     ],
                   ),
                 ),
-            ],
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ReelsScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset(
+                        "lib/images/reelSVG.svg",
+                        width: 24,
+                        height: 24,
+                        color: Colors.blue,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Катушки',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (role == 'ADMIN')
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ManufacturersScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.business, color: Colors.blue),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Производители',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (role == 'ADMIN')
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/types');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.category, color: Colors.blue),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Типы катушек и удилищ',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (role == 'USER')
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/carts');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.shopping_cart, color: Colors.blue),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Корзина',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

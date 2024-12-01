@@ -1,6 +1,7 @@
 import 'package:fishingshop/DTOs/rod_create_request.dart';
 import 'package:fishingshop/model/manufacturer.dart';
 import 'package:fishingshop/model/typeOfRod.dart';
+import 'package:fishingshop/screen/rod/rods_screen.dart';
 import 'package:fishingshop/service/manufacturer_repository.dart';
 import 'package:fishingshop/service/rod_repository.dart';
 import 'package:fishingshop/service/type_of_rod_repository.dart';
@@ -165,13 +166,18 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
         : Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
+              centerTitle: true,
               title: Text('Добавление удилища'),
               backgroundColor: Colors.white,
               leading: IconButton(
                 icon: Icon(Icons.arrow_back, color: Colors.black),
                 onPressed: () {
-                  Navigator.pushNamed(context,
-                      '/rods'); // Убедитесь, что маршрут '/login' определен
+                  Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => new RodsScreen()),
+                                  (Route<dynamic> route)=>false,
+                            );
                 },
               ),
             ),
@@ -332,8 +338,14 @@ class _RodCreateScreenState extends State<RodCreateScreen> {
                             );
 
                             // Здесь можно сохранить новый объект Rod в базе данных или отправить на сервер
-                            RodRepository.addRod(request);
-                            Navigator.pop(context,true);
+                            RodRepository.addRod(request, context);
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => new RodsScreen()),
+                                  (Route<dynamic> route)=>false,
+                            );
+                            
                           }
                         },
                         style: ElevatedButton.styleFrom(

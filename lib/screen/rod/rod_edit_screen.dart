@@ -2,6 +2,7 @@ import 'package:fishingshop/DTOs/rod_edit_request.dart';
 import 'package:fishingshop/model/manufacturer.dart';
 import 'package:fishingshop/model/rod.dart';
 import 'package:fishingshop/model/typeOfRod.dart';
+import 'package:fishingshop/screen/rod/rods_screen.dart';
 import 'package:fishingshop/service/manufacturer_repository.dart';
 import 'package:fishingshop/service/rod_repository.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class _RodEditScreenState extends State<RodEditScreen> {
   void didChangeDependencies() {
     final args = ModalRoute.of(context)?.settings.arguments;
     rod = args as Rod;
-    
+
     super.didChangeDependencies();
   }
 
@@ -35,7 +36,7 @@ class _RodEditScreenState extends State<RodEditScreen> {
   void _showManufacturerMenu(BuildContext context) async {
     final RenderBox overlay =
         Overlay.of(context)!.context.findRenderObject() as RenderBox;
-         final RenderBox button = context.findRenderObject() as RenderBox;
+    final RenderBox button = context.findRenderObject() as RenderBox;
 
     await showMenu<int>(
       color: Colors.white,
@@ -56,7 +57,8 @@ class _RodEditScreenState extends State<RodEditScreen> {
               thumbVisibility: true,
               child: SingleChildScrollView(
                 child: Column(
-                  children: manufacturers!.map<Widget>((Manufacturer manufacturer) {
+                  children:
+                      manufacturers!.map<Widget>((Manufacturer manufacturer) {
                     return GestureDetector(
                       onTap: () {
                         setState(() {
@@ -68,7 +70,8 @@ class _RodEditScreenState extends State<RodEditScreen> {
                         height: 40,
                         alignment: Alignment.centerLeft,
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(manufacturer.name, style: TextStyle(color: Colors.black)),
+                        child: Text(manufacturer.name,
+                            style: TextStyle(color: Colors.black)),
                       ),
                     );
                   }).toList(),
@@ -79,7 +82,6 @@ class _RodEditScreenState extends State<RodEditScreen> {
         ),
       ],
       elevation: 8.0,
-      
     );
   }
 
@@ -100,7 +102,7 @@ class _RodEditScreenState extends State<RodEditScreen> {
   Widget build(BuildContext context) {
     return manufacturers == null
         ? const Scaffold(
-           backgroundColor: Colors.white,
+            backgroundColor: Colors.white,
             body: Center(
               child: CircularProgressIndicator(),
             ),
@@ -142,7 +144,7 @@ class _RodEditScreenState extends State<RodEditScreen> {
                           name = value!;
                         },
                       ),
-                      
+
                       TextFormField(
                         decoration: InputDecoration(labelText: 'Цена'),
                         initialValue: rod!.price.toString(),
@@ -165,20 +167,26 @@ class _RodEditScreenState extends State<RodEditScreen> {
                             labelText: 'Производитель',
                           ),
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
                             child: Text(
                               selectedManufacturerId != null
-                                  ? manufacturers!.firstWhere((m) => m.id == selectedManufacturerId).name
+                                  ? manufacturers!
+                                      .firstWhere(
+                                          (m) => m.id == selectedManufacturerId)
+                                      .name
                                   : 'Выберите производителя',
                               style: TextStyle(
-                                color: selectedManufacturerId != null ? Colors.black : Colors.red,
+                                color: selectedManufacturerId != null
+                                    ? Colors.black
+                                    : Colors.red,
                                 fontSize: 16,
                               ),
                             ),
                           ),
                         ),
                       ),
-                      
+
                       SizedBox(height: 20),
                       /*Text(
                         selectedManufacturerId != null
@@ -222,7 +230,7 @@ class _RodEditScreenState extends State<RodEditScreen> {
                             RodEditRequest request = RodEditRequest(
                               id: rod!.id,
                               name: name,
-                              
+
                               price: price,
                               manufacturer: Manufacturer(
                                   id: manufacturerId,
@@ -232,10 +240,14 @@ class _RodEditScreenState extends State<RodEditScreen> {
                             );
 
                             // Здесь можно сохранить новый объект Rod в базе данных или отправить на сервер
-                            RodRepository.editRod(request);
+                            RodRepository.editRod(request, context);
                             //Navigator.pop(context, true);
-                            Navigator.pushNamed(context, '/rods');
-                            // Закрыть страницу после сохранения
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => new RodsScreen()),
+                                  (Route<dynamic> route)=>false,
+                            );
                           }
                         },
                         style: ElevatedButton.styleFrom(

@@ -13,12 +13,10 @@ class Cart{
   });
 
  factory Cart.fromMap(Map<String, dynamic> cartMap) {
-    // Проверка и преобразование списка reelForCartResponseList
     var reelList = (cartMap['reelForCartResponseList'] as List<dynamic>?)
         ?.map((reel) => ReelForCartResponse.fromMap(reel as Map<String, dynamic>))
         .toList() ?? []; // Пустой список по умолчанию
 
-    // Проверка и преобразование списка rodForCartResponseList
     var rodList = (cartMap['rodForCartResponseList'] as List<dynamic>?)
         ?.map((rod) => RodForCartResponse.fromMap(rod as Map<String, dynamic>))
         .toList() ?? []; // Пустой список по умолчанию
