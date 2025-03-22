@@ -47,6 +47,8 @@ class ReelTile extends StatelessWidget {
               // Название катушки
               Text(
                 'Катушка ${reel.manufacturer.name} ${reel.name}',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1, // Ограничиваем количество линий до 1
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 15,

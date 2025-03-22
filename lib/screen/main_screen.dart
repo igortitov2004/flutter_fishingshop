@@ -5,6 +5,7 @@ import 'package:fishingshop/screen/register_screen.dart';
 import 'package:fishingshop/screen/rod/rods_screen.dart';
 import 'package:fishingshop/screen/sign_in_screen.dart';
 import 'package:fishingshop/screen/slider.dart';
+import 'package:fishingshop/screen/user/personal_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,18 +41,16 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       appBar: AppBar(
-       
         centerTitle: true,
         title: Row(
           children: [
             Image.asset(
               "lib/images/fishLogin.jpg",
-              width: 50, 
+              width: 50,
               height: 50,
             ),
-            const SizedBox(width: 8), 
+            const SizedBox(width: 8),
             const Text(
               'CATFISH',
               style: TextStyle(fontSize: 20),
@@ -60,97 +59,34 @@ class _MainScreenState extends State<MainScreen> {
         ),
         backgroundColor: const Color(0xffffffff),
         automaticallyImplyLeading: false,
-
         actions: [
-          PopupMenuButton(
-            offset: const Offset(0, 40),
+          IconButton(
             icon: const Icon(Icons.account_circle),
-            color: const Color(0xffffffff),
-            itemBuilder: (context) => [
-              if (role != null)
-                PopupMenuItem(
-                  child: Text(
-                    'Логин: $username',
-                    style: const TextStyle(color: Colors.green),
-                  ),
-                ),
-              if (role == "USER")
-                PopupMenuItem(
-                  child: ListTile(
-                    title: const Text('Заказы'),
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const OrderScreen()),
-                      );
-                    },
-                  ),
-                ),
-              if (role != null)
-                PopupMenuItem(
-                  child: ListTile(
-                    title: const Text('Изменение пароля'),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/changePass');
-                    },
-                  ),
-                ),
-              if (role != null)
-                PopupMenuItem(
-                  child: ListTile(
-                    title: const Text('Выйти'),
-                    onTap: () {
-                      prefs.remove('token');
-                      prefs.remove('role');
-                      prefs.remove('username');
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const MainScreen()),
-                      );
-                    },
-                  ),
-                ),
-              if (role == null)
-                PopupMenuItem(
-                  child: ListTile(
-                    title: Text('Авторизация',
-                        style: const TextStyle(color: Colors.blue)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SignInPage()),
-                      );
-                    },
-                  ),
-                ),
-              if (role == null)
-                PopupMenuItem(
-                  child: ListTile(
-                    title: Text('Регистрация',
-                        style: const TextStyle(color: Colors.blue)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RegisterPage()),
-                      );
-                    },
-                  ),
-                ),
-            ],
+            onPressed: () {
+              if (role != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const PersonalScreen()),
+                );
+              }else{
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const SignInPage()),
+                );
+              }
+            },
           ),
         ],
       ),
-      
-     // backgroundColor: Color.fromARGB(255, 0, 204, 255),
+
+      // backgroundColor: Color.fromARGB(255, 0, 204, 255),
       body: Container(
         height: double.infinity,
         color: const Color(0x1200CCFF),
         child: SingleChildScrollView(
-         // color: const Color(0x1200CCFF),
+          // color: const Color(0x1200CCFF),
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -161,7 +97,8 @@ class _MainScreenState extends State<MainScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const RodsScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const RodsScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(

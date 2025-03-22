@@ -1,4 +1,5 @@
 import 'package:fishingshop/model/manufacturer.dart';
+import 'package:fishingshop/model/rod_comment.dart';
 import 'package:fishingshop/model/typeOfRod.dart';
 
 class Rod{
@@ -11,6 +12,10 @@ class Rod{
   TypeOfRod type;
   Manufacturer manufacturer;
   String link;
+  List<RodComment> rodComments;
+  int? commentsAmount;
+  double rating;
+  int amount;
 
   Rod({
     required this.id,
@@ -22,9 +27,16 @@ class Rod{
     required this.type,
     required this.manufacturer,
     required this.link,
+    required this.rodComments,
+    required this.commentsAmount,
+    required this.rating,
+    required this.amount
   });
 
   factory Rod.fromMap(Map rodMap){
+    var rodCommentList = (rodMap['rodCommentsList'] as List<dynamic>?)
+        ?.map((reel) => RodComment.fromMap(reel as Map<String, dynamic>))
+        .toList() ?? []; // Пустой список по умолчанию
     return Rod(
       id: rodMap['id'],
       name: rodMap['name'],
@@ -34,7 +46,11 @@ class Rod{
       price: rodMap['price'],
       type: TypeOfRod.fromMap(rodMap['type']),
       manufacturer: Manufacturer.fromMap(rodMap['manufacturer']),
-      link: rodMap['link']
+      link: rodMap['link'],
+      rodComments: rodCommentList,
+      commentsAmount: rodMap['commentsAmount'],
+      rating: rodMap['rating'],
+      amount: rodMap['amount']
       );
   }
     Map<String, dynamic> toMap(Rod rod) {

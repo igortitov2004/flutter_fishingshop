@@ -2,7 +2,6 @@ import 'package:fishingshop/model/rod.dart';
 import 'package:fishingshop/service/cart_repository.dart';
 import 'package:flutter/material.dart';
 
-
 class RodTile extends StatelessWidget {
   final Rod rod;
   final String? role; // Передаем роль как параметр
@@ -48,6 +47,8 @@ class RodTile extends StatelessWidget {
               // Название удилища
               Text(
                 'Удилище ${rod.manufacturer.name} ${rod.name}',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1, // Ограничиваем количество линий до 1
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 15,
@@ -59,8 +60,7 @@ class RodTile extends StatelessWidget {
                 '${rod.length} м, тест ${rod.testLoad} г',
                 maxLines: 2,
               ),
-              if (role == 'USER')
-              const SizedBox(height: 10),
+              if (role == 'USER') const SizedBox(height: 10),
               // Кнопка "Купить"
               if (role == 'USER')
                 Container(

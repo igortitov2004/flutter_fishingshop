@@ -8,8 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CartRepository {
-  
-
   static Future<Cart> getCart() async {
     var url = Uri.parse('$baseURL/carts');
     
@@ -20,11 +18,8 @@ class CartRepository {
       "Content-Type": "application/json; charset=utf-8",
       "Authorization": "Bearer $token",
     };
-
     try {
-    
       http.Response response = await http.get(url, headers: headers);
-
       if (response.statusCode == 200) {
         print(response.body);
         Map<String, dynamic> cartJson = json.decode(utf8.decode(response.bodyBytes));

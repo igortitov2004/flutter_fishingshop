@@ -46,6 +46,7 @@ class _RegisterPageState extends State<RegisterPage> {
         var myToken = jsonResponse['token'];
         prefs.setString('token', myToken);
         prefs.setString('role', jsonResponse['role']);
+        prefs.setString('username', jsonResponse['username']);
         Navigator.pushNamed(context, '/main');
       } else {
         // Обработка ошибок
