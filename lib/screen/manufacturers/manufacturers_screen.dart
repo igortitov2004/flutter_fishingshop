@@ -50,7 +50,7 @@ class _ManufacturersScreenState extends State<ManufacturersScreen> {
               centerTitle: true,
               backgroundColor: const Color(0xffffffff),
               actions: [
-                IconButton(
+                /*IconButton(
                   icon: const Icon(Icons.add, color: Colors.blue),
                   onPressed: () {
                     TextEditingController manufacturerController =
@@ -96,7 +96,7 @@ class _ManufacturersScreenState extends State<ManufacturersScreen> {
                       },
                     );
                   },
-                ),
+                ),*/
               ],
             ),
             body: Container(
@@ -121,7 +121,7 @@ class _ManufacturersScreenState extends State<ManufacturersScreen> {
                         manufacturer.name,
                         textAlign: TextAlign.center,
                       ),
-                      onLongPress: () {
+                      /*onLongPress: () {
                         TextEditingController manufacturerController =
                         TextEditingController();
                         manufacturerController.text = manufacturers![index].name;
@@ -165,7 +165,7 @@ class _ManufacturersScreenState extends State<ManufacturersScreen> {
                         );
                       },
                     );
-                      },
+                      },*/
                     ),
                   );
                 },

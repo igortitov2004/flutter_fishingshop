@@ -78,11 +78,11 @@ class _ReelAndRodTypesScreenState extends State<ReelAndRodTypesScreen>
           title: const Text('Типы товаров'),
           backgroundColor: Colors.white,
           actions: [
-            IconButton(
+            /*IconButton(
                 icon: const Icon(Icons.add, color: Colors.blue),
                 onPressed: () {
                   _showAddDialog(isRodSelected);
-                }),
+                }),*/
           ],
           bottom: TabBar(
             controller: _tabController,
@@ -127,9 +127,9 @@ class _ReelAndRodTypesScreenState extends State<ReelAndRodTypesScreen>
                       margin: const EdgeInsets.all(5),
                       child: ListTile(
                         title: Text(typeOfRod.type, textAlign: TextAlign.center),
-                        onLongPress: () {
-                          _showEditDialog(typeOfRod.id, typeOfRod.type, true);
-                        },
+                        //onLongPress: () {
+                          //_showEditDialog(typeOfRod.id, typeOfRod.type, true);
+                        //},
                       ),
                     );
                   },
@@ -160,9 +160,9 @@ class _ReelAndRodTypesScreenState extends State<ReelAndRodTypesScreen>
                       margin: const EdgeInsets.all(5),
                       child: ListTile(
                         title: Text(typeOfReel.type, textAlign: TextAlign.center),
-                        onLongPress: () {
-                          _showEditDialog(typeOfReel.id, typeOfReel.type, false);
-                        },
+                        //onLongPress: () {
+                          //_showEditDialog(typeOfReel.id, typeOfReel.type, false);
+                        //},
                       ),
                     );
                   },

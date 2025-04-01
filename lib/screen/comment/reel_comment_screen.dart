@@ -17,6 +17,7 @@ class ReelCommentScreen extends StatelessWidget {
         title: const Text('Отзывы'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
+        centerTitle: true,
       ),
       body: Container(
         color: Color(0x1200CCFF),

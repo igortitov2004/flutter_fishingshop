@@ -34,14 +34,35 @@ class ReelTile extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
               const SizedBox(height: 5),
-              // Цена
-              Text(
-                '${reel.price} BYN',
-                style: const TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+              // Цена и рейтинг
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${reel.price} BYN',
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.star,
+                        color: Colors.yellow,
+                        size: 20,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        '${reel.rating}',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               const SizedBox(height: 2),
               // Название катушки

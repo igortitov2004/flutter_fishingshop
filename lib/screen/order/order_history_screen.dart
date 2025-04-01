@@ -1,4 +1,5 @@
 import 'package:fishingshop/screen/comment/create_comment_screen.dart';
+import 'package:fishingshop/screen/user/personal_screen.dart';
 import 'package:fishingshop/service/order_repository.dart';
 import 'package:fishingshop/tiles/reel_tile.dart';
 import 'package:fishingshop/tiles/rod_tile.dart';
@@ -25,9 +26,19 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PersonalScreen()),
+            );
+          },
+        ),
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         title: Text('История заказов'),
+        centerTitle: true,
       ),
       body: Scaffold(
         backgroundColor:
@@ -57,13 +68,27 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Дата заказа: ${order.localDateTime}',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        Card(
+                          color: const Color.fromARGB(255, 205, 218, 243),
+                          elevation: 4.0,
+                          margin: EdgeInsets.all(2.0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${order.localDateTime}',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 8.0),
+                                Text(
+                                  'Общая сумма: ${order.totalPrice.toStringAsFixed(2)} BYN',
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                        SizedBox(height: 8.0),
-                        Text('Товары в заказе:',
-                            style: TextStyle(fontSize: 16.0)),
 
                         // Размещение катушек с звёздочками
                         for (int i = 0;
@@ -88,19 +113,21 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                       right: 10.0,
                                       child: IconButton(
                                         icon: Icon(Icons.star,
-                                            color: Colors.yellow),
+                                            color: Colors.blue),
                                         onPressed: () {
                                           // Переход на экран создания отзыва
-                                         Navigator.push(
+                                          Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   CreateCommentScreen(
-                                                    productId: order
-                                              .reelsForOrderResponseList[i]
-                                              .reel.id,
-                                                    productType: "reel",
-                                                      ), // Замените на актуальное имя товара
+                                                productId: order
+                                                    .reelsForOrderResponseList[
+                                                        i]
+                                                    .reel
+                                                    .id,
+                                                productType: "reel",
+                                              ), // Замените на актуальное имя товара
                                             ),
                                           );
                                         },
@@ -125,19 +152,21 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                       right: 10.0,
                                       child: IconButton(
                                         icon: Icon(Icons.star,
-                                            color: Colors.yellow),
+                                            color: Colors.blue),
                                         onPressed: () {
                                           // Переход на экран создания отзыва
-                                           Navigator.push(
+                                          Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   CreateCommentScreen(
-                                                    productId: order
-                                              .reelsForOrderResponseList[i + 1]
-                                              .reel.id,
-                                                    productType: "reel",
-                                                      ), // Замените на актуальное имя товара
+                                                productId: order
+                                                    .reelsForOrderResponseList[
+                                                        i + 1]
+                                                    .reel
+                                                    .id,
+                                                productType: "reel",
+                                              ), // Замените на актуальное имя товара
                                             ),
                                           );
                                         },
@@ -170,18 +199,20 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                       right: 10.0,
                                       child: IconButton(
                                         icon: Icon(Icons.star,
-                                            color: Colors.yellow),
+                                            color: Colors.blue),
                                         onPressed: () {
                                           // Переход на экран создания отзыва
-                                           Navigator.push(
+                                          Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   CreateCommentScreen(
-                                                    productId: order
-                                              .rodsForOrderResponseList[j].rod.id,
-                                                    productType: "rod",
-                                                      ), // Замените на актуальное имя товара
+                                                productId: order
+                                                    .rodsForOrderResponseList[j]
+                                                    .rod
+                                                    .id,
+                                                productType: "rod",
+                                              ), // Замените на актуальное имя товара
                                             ),
                                           );
                                         },
@@ -205,19 +236,21 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                       right: 10.0,
                                       child: IconButton(
                                         icon: Icon(Icons.star,
-                                            color: Colors.yellow),
+                                            color: Colors.blue),
                                         onPressed: () {
                                           // Переход на экран создания отзыва
-                                         Navigator.push(
+                                          Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   CreateCommentScreen(
-                                                    productId: order
-                                              .rodsForOrderResponseList[j + 1]
-                                              .rod.id,
-                                                    productType: "rod",
-                                                      ), // Замените на актуальное имя товара
+                                                productId: order
+                                                    .rodsForOrderResponseList[
+                                                        j + 1]
+                                                    .rod
+                                                    .id,
+                                                productType: "rod",
+                                              ), // Замените на актуальное имя товара
                                             ),
                                           );
                                         },
@@ -227,10 +260,6 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
                                 ),
                             ],
                           ),
-
-                        SizedBox(height: 8.0),
-                        Text(
-                            'Общая сумма: \$${order.totalPrice.toStringAsFixed(2)}'),
                       ],
                     ),
                   ),

@@ -1,6 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:fishingshop/DTOs/cart.dart';
+import 'package:fishingshop/model/rod.dart';
 import 'package:fishingshop/screen/main_screen.dart';
 import 'package:fishingshop/service/cart_repository.dart';
+import 'package:fishingshop/service/image_repository.dart';
 import 'package:fishingshop/service/order_repository.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +17,20 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   Cart? cart;
+  static final Map<int, Uint8List?> imageCache = {}; // Кэш для изображений
+
+  Future<Uint8List?> _loadRodImage(int id) async {
+    if (imageCache.containsKey(id)) {
+      return imageCache[id]; // Загружаем из кэша
+    } else {
+      // Если нет в кэше, загружаем из сети
+      Uint8List? bytes = await ImageRepository.fetchImage(id);
+      if (bytes != null) {
+        imageCache[id] = bytes; // Сохраняем в кэше
+      }
+      return bytes; // Возвращаем загруженные байты
+    }
+  }
 
   getCart() async {
     cart = await CartRepository.getCart();
@@ -351,16 +369,45 @@ class _CartScreenState extends State<CartScreen> {
                                   children: [
                                     Expanded(
                                       child: ListTile(
-                                        leading: Image.network(
-                                          rod.rod.link,
-                                          width: 55,
-                                          height: 55,
-                                          fit: BoxFit.cover,
+                                        leading: FutureBuilder<Uint8List?>(
+                                          future: _loadRodImage(rod.rod.id),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const SizedBox(
+                                                width: 55,
+                                                height: 55,
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            } else if (snapshot.hasData &&
+                                                snapshot.data != null) {
+                                              return Image.memory(
+                                                snapshot.data!,
+                                                width: 55,
+                                                height: 55,
+                                                fit: BoxFit.cover,
+                                              );
+                                            } else {
+                                              return const SizedBox(
+                                                width: 55,
+                                                height: 55,
+                                                child: Icon(Icons.error),
+                                              );
+                                            }
+                                          },
                                         ),
-                                        onTap: () {
+                                        onTap: () async {
+                                          Uint8List? imageBytes =
+                                              await _loadRodImage(rod.rod.id);
                                           Navigator.pushNamed(
-                                              context, '/rodsDetails',
-                                              arguments: rod.rod);
+                                            context,
+                                            '/rodsDetails',
+                                            arguments: {
+                                              'rod': rod.rod,
+                                              'imageBytes': imageBytes,
+                                            },
+                                          );
                                         },
                                         title: Text(rod.rod.name),
                                         subtitle: Text(
@@ -388,7 +435,7 @@ class _CartScreenState extends State<CartScreen> {
                                             IconButton(
                                               icon: const Icon(Icons.add),
                                               onPressed: () {
-                                                _increaseRodAmount(rod.id); 
+                                                _increaseRodAmount(rod.id);
                                               },
                                             ),
                                           ],

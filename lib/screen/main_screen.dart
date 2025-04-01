@@ -69,11 +69,10 @@ class _MainScreenState extends State<MainScreen> {
                   MaterialPageRoute(
                       builder: (context) => const PersonalScreen()),
                 );
-              }else{
+              } else {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const SignInPage()),
+                  MaterialPageRoute(builder: (context) => const SignInPage()),
                 );
               }
             },
@@ -86,163 +85,182 @@ class _MainScreenState extends State<MainScreen> {
         height: double.infinity,
         color: const Color(0x1200CCFF),
         child: SingleChildScrollView(
-          // color: const Color(0x1200CCFF),
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                SimpleSlider(), // Убираем Expanded, чтобы кнопки шли сразу под слайдером
-                const SizedBox(height: 20), // Отступ между слайдером и кнопками
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const RodsScreen()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SvgPicture.asset(
-                        "lib/images/rodSVG.svg",
-                        width: 24,
-                        height: 24,
-                        color: Colors.blue,
+                SimpleSlider(),
+                const SizedBox(height: 20),
+                // Создаем строки с кнопками
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const RodsScreen()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
                       ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        'Удилища',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SvgPicture.asset(
+                            "lib/images/rodSVG.svg",
+                            width: 24,
+                            height: 24,
+                            color: Colors.blue,
+                          ),
+                          const SizedBox(width: 10),
+                          const Text(
+                            'Удилища',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ReelsScreen()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SvgPicture.asset(
+                            "lib/images/reelSVG.svg",
+                            width: 24,
+                            height: 24,
+                            color: Colors.blue,
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Катушки',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                //const SizedBox(height: 20), // Отступ между рядами
+                if (role == 'USER') ...[
+                  const SizedBox(height: 5), // Отступ перед последним рядом
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/carts');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.shopping_cart, color: Colors.blue),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Корзина',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
+                ],
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const ManufacturersScreen()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.business, color: Colors.blue),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Производители',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/types');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.category, color: Colors.blue),
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Типы',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ReelsScreen()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SvgPicture.asset(
-                        "lib/images/reelSVG.svg",
-                        width: 24,
-                        height: 24,
-                        color: Colors.blue,
-                      ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Катушки',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (role == 'ADMIN')
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ManufacturersScreen()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.business, color: Colors.blue),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Производители',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                if (role == 'ADMIN')
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/types');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.category, color: Colors.blue),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Типы катушек и удилищ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                if (role == 'USER')
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/carts');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const Icon(Icons.shopping_cart, color: Colors.blue),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Корзина',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                
               ],
             ),
           ),

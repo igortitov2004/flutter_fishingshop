@@ -60,6 +60,7 @@ class _ReelDetailsState extends State<ReelDetails> {
         surfaceTintColor: Colors.transparent,
         title: Text(reel!.name),
         backgroundColor: Colors.white,
+        centerTitle: true,
       ),
       body: Container(
         // Обернули в Container

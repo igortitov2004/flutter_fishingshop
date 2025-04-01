@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:fishingshop/model/rod.dart';
 import 'package:fishingshop/screen/comment/rod_comment_screen.dart';
 import 'package:fishingshop/screen/rod/rods_screen.dart';
@@ -15,12 +16,14 @@ class RodDetails extends StatefulWidget {
 
 class _RodDetailsState extends State<RodDetails> {
   Rod? rod;
+  Uint8List? imageBytes; // Для хранения байтов изображения
   String? role;
 
   @override
   void didChangeDependencies() {
-    final args = ModalRoute.of(context)?.settings.arguments;
-    rod = args as Rod;
+    final args = ModalRoute.of(context)?.settings.arguments as Map;
+    rod = args['rod'] as Rod;
+    imageBytes = args['imageBytes'] as Uint8List?;
     super.didChangeDependencies();
   }
 
@@ -43,8 +46,9 @@ class _RodDetailsState extends State<RodDetails> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
-        title: Text(rod!.name),
+        title: Text(rod?.name ?? 'Удилище'),
         backgroundColor: Colors.white,
+        centerTitle: true,
       ),
       body: Container(
         color: const Color(0x1200CCFF),
@@ -54,12 +58,19 @@ class _RodDetailsState extends State<RodDetails> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Image.network(
-                  rod!.link,
-                  height: 350,
-                  width: double.infinity,
-                  fit: BoxFit.cover, // Масштабирование изображения
-                ),
+                // Отображение изображения из байтов
+                imageBytes != null
+                    ? Image.memory(
+                        imageBytes!,
+                        height: 350,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        height: 350,
+                        color: Colors.grey, // Заменитель, пока изображение загружается
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
                 const SizedBox(height: 15),
                 Row(
                   children: [
@@ -81,12 +92,10 @@ class _RodDetailsState extends State<RodDetails> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          // Переход на экран отзывов (если он существует)
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => RodCommentScreen(
-                                  rod: rod!), // Переход на экран отзывов
+                              builder: (context) => RodCommentScreen(rod: rod!),
                             ),
                           );
                         },
@@ -139,13 +148,7 @@ class _RodDetailsState extends State<RodDetails> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(10),
                     child: Text(
-                      "Удилище " +
-                          rod!.type.type +
-                          " /" +
-                          "\n" +
-                          rod!.manufacturer.name +
-                          " " +
-                          rod!.name,
+                      "Удилище ${rod!.type.type} / ${rod!.manufacturer.name} ${rod!.name}",
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 22,
@@ -172,28 +175,28 @@ class _RodDetailsState extends State<RodDetails> {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          "Производитель - " + rod!.manufacturer.name,
+                          "Производитель - ${rod!.manufacturer.name}",
                           style: const TextStyle(
                             color: Colors.black,
                             fontSize: 16,
                           ),
                         ),
                         Text(
-                          "Длина, м. - " + rod!.length.toString(),
+                          "Длина, м. - ${rod!.length}",
                           style: const TextStyle(
                             color: Colors.black,
                             fontSize: 16,
                           ),
                         ),
                         Text(
-                          "Тест до гр. - " + rod!.testLoad.toString(),
+                          "Тест до гр. - ${rod!.testLoad}",
                           style: const TextStyle(
                             color: Colors.black,
                             fontSize: 16,
                           ),
                         ),
                         Text(
-                          "Вес (гр.) - " + rod!.weight.toString(),
+                          "Вес (гр.) - ${rod!.weight}",
                           style: const TextStyle(
                             color: Colors.black,
                             fontSize: 16,

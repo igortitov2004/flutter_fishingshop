@@ -1,5 +1,4 @@
 import 'package:fishingshop/model/reel.dart';
-import 'package:fishingshop/model/rod.dart';
 
 class ReelForOrderResponse{
   Reel reel;
