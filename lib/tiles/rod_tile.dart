@@ -52,7 +52,7 @@ class _RodTileState extends State<RodTile> {
       color: const Color.fromARGB(255, 255, 255, 255),
       child: InkWell(
         onTap: () {
-           Navigator.pushNamed(context, '/rodsDetails', arguments: {
+          Navigator.pushNamed(context, '/rodsDetails', arguments: {
             'rod': widget.rod,
             'imageBytes': imageBytes,
           });
@@ -74,7 +74,8 @@ class _RodTileState extends State<RodTile> {
                   : Container(
                       height: 160,
                       width: double.infinity,
-                      color: Colors.grey, // Заменитель, пока изображение загружается
+                      color: Colors
+                          .grey, // Заменитель, пока изображение загружается
                       child: const Center(child: CircularProgressIndicator()),
                     ),
               const SizedBox(height: 5),
@@ -125,7 +126,20 @@ class _RodTileState extends State<RodTile> {
                 '${widget.rod.length} м, тест ${widget.rod.testLoad} г',
                 maxLines: 2,
               ),
-              if (widget.role == 'USER') const SizedBox(height: 10),
+              const SizedBox(height: 2),
+              if (widget.rod.amount > 0)
+                Text('В наличии',
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 67, 215, 119),
+                      fontSize: 15,
+                    )),
+              if (widget.rod.amount <= 0)
+                Text('Нет на складе',
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 225, 92, 92),
+                      fontSize: 15,
+                    )),
+              
               // Кнопка "Купить"
               if (widget.role == 'USER')
                 Container(

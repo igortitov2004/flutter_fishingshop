@@ -75,7 +75,20 @@ class ReelTile extends StatelessWidget {
                   fontSize: 15,
                 ),
               ),
-              const SizedBox(height: 10),
+              
+
+              if (reel.amount > 0)
+                Text('В наличии',
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 67, 215, 119),
+                      fontSize: 15,
+                    )),
+              if (reel.amount <= 0)
+                Text('Нет на складе',
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 225, 92, 92),
+                      fontSize: 15,
+                    )),
               // Кнопка "Купить"
               if (role == 'USER')
                 Container(

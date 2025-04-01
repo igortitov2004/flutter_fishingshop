@@ -74,6 +74,7 @@ flutter:
     - lib/images/delivery.jpg
     - lib/images/rodSVG.svg
     - lib/images/reelSVG.svg
+    - lib/images/default_image.webp
   
 
 

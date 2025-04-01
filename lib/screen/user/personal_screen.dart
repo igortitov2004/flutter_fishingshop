@@ -34,6 +34,15 @@ class _PersonalScreenState extends State<PersonalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MainScreen()),
+            );
+          },
+        ),
         title: Row(
           children: [
             Image.asset(

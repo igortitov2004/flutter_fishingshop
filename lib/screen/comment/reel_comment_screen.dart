@@ -14,6 +14,7 @@ class ReelCommentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
         title: const Text('Отзывы'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,

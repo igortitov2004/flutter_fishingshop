@@ -163,7 +163,17 @@ class _CartScreenState extends State<CartScreen> {
                     Container(
                       child: ElevatedButton(
                         onPressed: () {
-                          _showAddressDialog();
+                          if (cart!.reelForCartResponseList.any((reelForCart) =>
+                                  reelForCart.reel.amount == 0) ||
+                              cart!.rodForCartResponseList.any(
+                                  (rodForCart) => rodForCart.rod.amount == 0)) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                  "Удалите товары, которые отсутствуют на складе!"),
+                            ));
+                          } else {
+                            _showAddressDialog();
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
@@ -273,6 +283,15 @@ class _CartScreenState extends State<CartScreen> {
                                           style: const TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
+                                        if (reel.reel.amount == 0) ...[
+                                          Text(
+                                            'Нет на складе',
+                                            style: const TextStyle(
+                                              color: Color.fromARGB(255, 225, 92, 92),
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ],
                                         Row(
                                           children: [
                                             IconButton(
@@ -423,23 +442,33 @@ class _CartScreenState extends State<CartScreen> {
                                           style: const TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.remove),
-                                              onPressed: () {
-                                                _decreaseRodAmount(rod.id);
-                                              },
+                                        if (rod.rod.amount == 0) ...[
+                                          Text(
+                                            'Нет на складе',
+                                            style: const TextStyle(
+                                              color: Color.fromARGB(255, 225, 92, 92),
+                                              fontSize: 15,
                                             ),
-                                            Text('${rod.amount}'),
-                                            IconButton(
-                                              icon: const Icon(Icons.add),
-                                              onPressed: () {
-                                                _increaseRodAmount(rod.id);
-                                              },
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
+                                        if (rod.rod.amount > 0)
+                                          Row(
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(Icons.remove),
+                                                onPressed: () {
+                                                  _decreaseRodAmount(rod.id);
+                                                },
+                                              ),
+                                              Text('${rod.amount}'),
+                                              IconButton(
+                                                icon: const Icon(Icons.add),
+                                                onPressed: () {
+                                                  _increaseRodAmount(rod.id);
+                                                },
+                                              ),
+                                            ],
+                                          ),
                                       ],
                                     ),
                                   ],
